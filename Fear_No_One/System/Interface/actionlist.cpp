@@ -9,6 +9,9 @@ ActionList::ActionList(QWidget *parent) :
     ui(new Ui::ActionList)
 {
     ui->setupUi(this);
+    ui->background->setPixmap(QPixmap("../Fear_No_One/Resource/Photo/actionlist.jpg"));
+    ui->background->resize(this->width(),this->height());
+    ui->lw_ActionItemList->setStyleSheet("background-color:transparent");
 }
 
 ActionList::~ActionList()

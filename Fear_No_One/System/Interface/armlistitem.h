@@ -17,8 +17,8 @@ public:
 
     //设置选项信息
     void setInfo(QString name, int iconId, int value);
-    //获取选项信息
-    QString getInfo();
+    //获取武器名字信息
+    QString getArmName();
 
     //手指是否显示
     void setFingerShow(bool enable);

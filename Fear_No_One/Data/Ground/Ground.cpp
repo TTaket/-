@@ -4,7 +4,6 @@
 Ground::Ground(int id):m_Move(0){
 	m_Id = id;
 	m_name.clear();
-
 };
 
 Ground::~Ground(){

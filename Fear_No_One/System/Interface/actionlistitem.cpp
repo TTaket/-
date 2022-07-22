@@ -6,6 +6,7 @@ ActionListItem::ActionListItem(QWidget *parent) :
     ui(new Ui::ActionListItem)
 {
     ui->setupUi(this);
+    ui->background->setPixmap(QPixmap("../Fear_No_One/Resource/Photo/actionlistitem.png"));
 }
 
 ActionListItem::~ActionListItem()

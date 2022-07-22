@@ -7,8 +7,9 @@ ArmList::ArmList(QWidget *parent) :
     ui(new Ui::ArmList)
 {
     ui->setupUi(this);
+    ui->background->setPixmap(QPixmap("../Fear_No_One/Resource/Photo/armlist.png"));
+    ui->lw_armList->setStyleSheet("background-color:transparent");
 }
-
 ArmList::~ArmList()
 {
     delete ui;
@@ -111,6 +112,7 @@ void ArmList::on_lw_armList_itemClicked(QListWidgetItem *item)
         if(item == m_qListWidgetVector[i])
         {
             m_armListItemVector[i]->setFingerShow(true);
+            armName = m_armListItemVector[i]->getArmName();
         }
         else
         {

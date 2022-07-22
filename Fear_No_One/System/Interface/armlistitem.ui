@@ -25,14 +25,32 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QLabel" name="lb_armListItem">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>300</width>
+     <width>320</width>
      <height>80</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>320</width>
+     <height>80</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>320</width>
+     <height>80</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>
@@ -47,6 +65,9 @@
      <height>80</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <property name="text">
     <string>手指</string>
    </property>
@@ -59,6 +80,9 @@
      <width>80</width>
      <height>80</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>武器图标</string>
@@ -73,6 +97,15 @@
      <height>80</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <property name="text">
     <string>武器名称</string>
    </property>
@@ -86,10 +119,24 @@
      <height>80</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <property name="text">
     <string>武器值</string>
    </property>
   </widget>
+  <zorder>lb_armFinger</zorder>
+  <zorder>lb_armIcon</zorder>
+  <zorder>lb_armName</zorder>
+  <zorder>lb_armValue</zorder>
+  <zorder>lb_armListItem</zorder>
  </widget>
  <resources/>
  <connections/>

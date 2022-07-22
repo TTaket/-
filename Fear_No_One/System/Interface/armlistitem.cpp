@@ -6,6 +6,8 @@ ArmListItem::ArmListItem(QWidget *parent) :
     ui(new Ui::ArmListItem)
 {
     ui->setupUi(this);
+
+
 }
 
 ArmListItem::~ArmListItem()
@@ -21,8 +23,8 @@ void ArmListItem::setInfo(QString name, int iconId, int value)
     ui->lb_armValue->setText(QString::number(value,10));
 }
 
-//获取选项信息
-QString ArmListItem::getInfo()
+//获取武器名字
+QString ArmListItem::getArmName()
 {
     return ui->lb_armName->text();
 }

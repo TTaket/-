@@ -7,6 +7,7 @@ ArmInfo::ArmInfo(QWidget *parent) :
     ui(new Ui::ArmInfo)
 {
     ui->setupUi(this);
+    ui->background->setPixmap(QPixmap("../Fear_No_One/Resource/Photo/armInfo.png"));
 }
 
 ArmInfo::~ArmInfo()
@@ -31,5 +32,6 @@ void ArmInfo::setArmInfo(CArm *arm)
     ui->lb_huibiValue->setText(str.setNum(arm->m_Shanbi,10));
     ui->lb_bishaValue->setText(str.setNum(0,10));
     ui->lb_mingzhongValue->setText(str.setNum(arm->m_Mingzhong,10));
+    img.scaled(this->width(), this->height());
     ui->lb_peopleIcon->setPixmap(img);
 }

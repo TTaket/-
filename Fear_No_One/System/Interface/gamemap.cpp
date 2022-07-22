@@ -60,7 +60,7 @@ GameMap::GameMap(QWidget *parent) :
     m_armList->setGeometry(0,0,320,240);
 
     m_armInfo->hide();
-    m_armInfo->setGeometry(350,120,280,270);
+    m_armInfo->setGeometry(350,240,280,270);
 
     m_armChoice->hide();
     m_armChoice->setGeometry(350,0,200,160);
@@ -152,54 +152,62 @@ void GameMap::drawPixmap(QPainter *painter){
         break;
     }
     painter->drawImage(0, 0, image);
+
     //根据人物坐标贴图
-    //1.获取地图二维数组
-        qDebug()<<CGameSystem::Checkpoint;
-        if(CGameSystem::Character_Info[0]){
-            qDebug()<<CGameSystem::Character_Info[0]->m_Id;
-        }
-//    //2.遍历二维数组进行贴图
-//    int i,j;
-//    int x,y;
-//    int scaled_width, scaled_height;
-//    for(i=0;i<_DEF_MAP_MAX;i++)
-//    {
-//        for(j=0;j<_DEF_MAP_MAX;j++)
-//        {
-//            if(groundMap->m_Peopleid[i][j] == 1) //罗伊
-//            {
-//                image.load("../Fear_No_One/Resource/Character/Map_basic/zhujue/03.png");
-//            }
-//            else if(groundMap->m_Peopleid[i][j] == 2) //李清
-//            {
-//                image.load("../Fear_No_One/Resource/Character/Map_basic/qingqi/03.png");
-//            }
-//            else if(groundMap->m_Peopleid[i][j] == 3) //皮古
-//            {
-//                image.load("../Fear_No_One/Resource/Character/Map_basic/zhongqi/03.png");
-//            }
-
-//            scaled_width = this->width()/_DEF_MAP_MAX;
-//            scaled_height = this->height()/_DEF_MAP_MAX;
-//            image = image.mirrored(true, true);
-//            image = image.scaled(scaled_width, scaled_height);
-//            x = this->width() / _DEF_MAP_MAX * i;
-//            y = this->height() / _DEF_MAP_MAX * j;
-//            painter->drawImage(x, y, image);
-//        }
-//    }
-
     painter->setWindow(0, this->height(), this->width(), -(this->height()));
-    int x,y;
-    int scaled_width, scaled_height;
-    image.load("../Fear_No_One/Resource/Character/Map_basic/zhujue/03.png");
-    scaled_width = this->width()/_DEF_MAP_MAX;
-    scaled_height = this->height()/_DEF_MAP_MAX;
-    //image = image.scaled(scaled_width, scaled_height);
-    image = image.mirrored(true, true);
-    x = this->width() / _DEF_MAP_MAX * 0;
-    y = this->height() / _DEF_MAP_MAX * 0;
-    painter->drawImage(x, y, image);
+    //1.获取地图二维数组
+    CGround_Map* groundMap = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1];
+
+    if(groundMap)
+    {
+        //2.遍历二维数组进行贴图
+        int i,j;
+        int x,y;
+        int scaled_width, scaled_height;
+
+        for(i=1;i<=groundMap->m_MapXmax;i++)
+        {
+            for(j=1;j<=groundMap->m_MapYmax;j++)
+            {
+                if(groundMap->m_Peopleid[i][j] == 1) //罗伊
+                {
+                    //qDebug()<<"罗伊";
+                    image.load("../Fear_No_One/Resource/Character/Map_basic/zhujue/03.png");
+                    scaled_width = this->width()/groundMap->m_MapXmax;
+                    scaled_height = this->height()/groundMap->m_MapYmax;
+                    image = image.mirrored(true, true);
+                    image.scaled(scaled_width, scaled_height);
+                    x = this->width() / groundMap->m_MapXmax * (i-1) ;
+                    y = this->height() / groundMap->m_MapYmax * (j-1);
+                    painter->drawImage(x, y, image);
+                }
+                else if(groundMap->m_Peopleid[i][j] == 2) //李清
+                {
+                    //qDebug()<<"李清";
+                    image.load("../Fear_No_One/Resource/Character/Map_basic/qingqi/03.png");
+                    scaled_width = this->width()/groundMap->m_MapXmax;
+                    scaled_height = this->height()/groundMap->m_MapYmax;
+                    image = image.mirrored(true, true);
+                    image.scaled(scaled_width, scaled_height);
+                    x = this->width() / groundMap->m_MapXmax * (i-1) ;
+                    y = this->height() / groundMap->m_MapYmax * (j-1);
+                    painter->drawImage(x, y, image);
+                }
+                else if(groundMap->m_Peopleid[i][j] == 3) //皮古
+                {
+                    //qDebug()<<"皮古";
+                    image.load("../Fear_No_One/Resource/Character/Map_basic/zhongqi/03.png");
+                    scaled_width = this->width()/groundMap->m_MapXmax;
+                    scaled_height = this->height()/groundMap->m_MapYmax;
+                    image = image.mirrored(true, true);
+                    image.scaled(scaled_width, scaled_height);
+                    x = this->width() / groundMap->m_MapXmax * (i-1) ;
+                    y = this->height() / groundMap->m_MapYmax * (j-1);
+                    painter->drawImage(x, y, image);
+                }
+            }
+        }
+    }
 
     painter->restore();
 };
@@ -219,8 +227,10 @@ void GameMap::on_pb_test_clicked()
     m_actionList->deleteItemList();
 
     //根据人物id获取行动列表
-    int id = 0;
+    //int id = CGameSystem::using_peoid;
+    int id=1;
     std::list<int> actionList = CGameSystem::Action(id);
+    qDebug()<<"cur peoid="<<id;
 
     //遍历行动列表显示在ui上
     for(auto ite = actionList.begin(); ite!= actionList.end(); ite++)
@@ -295,7 +305,27 @@ void GameMap::slot_action(QString actionName)
     }
     else if(!strcmp(actionName.toStdString().c_str(), "物品"))
     {
-        ;
+        //隐藏行动列表
+        m_actionList->hide();
+        m_armList->hide();
+
+        m_armList->deleteItemList();
+
+        //显示武器列表
+        //1.获取人物信息
+        int id = 1;
+        Character *character = CGameSystem::Character_Info[id-1];
+        //std::list<CArm*>::iterator ite;
+        //2.从武器链表中获取武器信息
+        for(auto ite = character->Armslist.begin(); ite != character->Armslist.end(); ite++)
+        {
+            ArmListItem* armItem = new ArmListItem;
+            armItem->setInfo(QString::fromStdString((*ite)->m_name),(*ite)->m_Id, (*ite)->m_Lastusetime);
+            m_armList->addItem(armItem);
+        }
+        //2.显示
+        m_armList->createList();
+        m_armList->show();
     }
     else if(!strcmp(actionName.toStdString().c_str(), "交互"))
     {
@@ -310,7 +340,8 @@ void GameMap::slot_action(QString actionName)
 //武器信息显示槽函数
 void GameMap::slot_armInfoShow(QString armName)
 {
-    qDebug()<<"aa";
+    qDebug()<<"aabb";
+    qDebug()<<armName;
     //获取当前人物信息
     int id=1;
     Character *character = CGameSystem::Character_Info[id-1];
@@ -320,6 +351,7 @@ void GameMap::slot_armInfoShow(QString armName)
         if(!strcmp((*ite)->m_name.c_str(), armName.toStdString().c_str()))
         {
             //显示武器信息
+            m_armInfo->setArmInfo(*ite);
             m_armInfo->show();
         }
     }

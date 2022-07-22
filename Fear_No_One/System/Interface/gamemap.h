@@ -11,11 +11,11 @@
 #include "actionlist.h"
 #include "armlist.h"
 #include "actionlistitem.h"
+#include "ArmListitem.h"
 #include "arminfo.h"
 #include "armchoice.h"
 #include "packdef.h"
 #include "CGameSystem.h"
-#include "ArmListitem.h"
 
 namespace Ui {
 class GameMap;
