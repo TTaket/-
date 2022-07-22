@@ -1,0 +1,134 @@
+#include "actionlist.h"
+#include "ui_peoplelist.h"
+#include <QObject>
+#include <QLabel>
+#include <QDebug>
+
+PeopleList::PeopleList(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::PeopleList)
+{
+    ui->setupUi(this);
+}
+
+PeopleList::~PeopleList()
+{           
+    delete ui;
+
+    deleteItemList();
+
+    QListWidgetItem* qItem = NULL;
+    for(int i=0; i<m_qListWidgetVector.size();i++)
+    {
+        qItem = m_qListWidgetVector[i];
+        if(qItem)
+        {
+            delete qItem;
+            qItem = NULL;
+        }
+    }
+    m_qListWidgetVector.clear();
+}
+
+//添加列表项
+void PeopleList::addItem(ActionListItem* item)
+{
+    m_ActionListItemVector.push_back(item);
+}
+
+void PeopleList::deleteItemList()
+{
+    for(int i=0;i<m_ActionListItemVector.size();i++)
+    {
+        if(m_ActionListItemVector[i])
+        {
+            delete m_ActionListItemVector[i];
+            m_ActionListItemVector[i] = NULL;
+        }
+    }
+
+    m_ActionListItemVector.clear();
+}
+
+//更新列表
+void PeopleList::updateList()
+{
+    ui->lw_itemList->hide();
+
+    //更新数据
+    for(int i=0;i<m_ActionListItemVector.size();i++)
+    {
+        //往“槽”中放入item
+        ui->lw_itemList->setItemWidget(m_qListWidgetVector[i], m_ActionListItemVector[i]);
+    }
+
+    ui->lw_itemList->show();
+}
+
+void PeopleList::createList()
+{
+    //清空表项
+    int n = ui->lw_itemList->count();
+    for(int i=0;i<n;i++)
+    {
+        ui->lw_itemList->takeItem(0); //是0不是i
+    }
+    //删除“旧槽”
+    for(int i=0;i<m_qListWidgetVector.size();i++)
+    {
+        if(m_qListWidgetVector[i])
+        {
+            delete m_qListWidgetVector[i];
+            m_qListWidgetVector[i] = NULL;
+        }
+    }
+    m_qListWidgetVector.clear();
+
+    //添加“新槽”
+    for(int i=0;i<m_ActionListItemVector.size();i++)
+    {
+        //添加“槽”
+        QListWidgetItem* qItem = new QListWidgetItem;
+        qItem->setSizeHint(QSize(0,60));
+        ui->lw_itemList->addItem(qItem);
+        m_qListWidgetVector.push_back(qItem);
+
+        //往“槽”中放入item
+        ui->lw_itemList->setItemWidget(qItem, m_ActionListItemVector[i]);
+    }
+}
+
+//单击事件
+void PeopleList::on_lw_itemList_itemClicked(QListWidgetItem *item)
+{
+    //在vector中找到这个item
+    for(int i=0;i<m_ActionListItemVector.size();i++)
+    {
+        if(item == m_qListWidgetVector[i])
+        {
+            m_ActionListItemVector[i]->setFingerShow(true);
+        }
+        else
+        {
+            m_ActionListItemVector[i]->setFingerShow(false);
+        }
+    }
+
+    updateList();
+}
+
+//双击事件
+void PeopleList::on_lw_itemList_itemDoubleClicked(QListWidgetItem *item)
+{
+    for(int i=0;i<m_ActionListItemVector.size();i++)
+    {
+        if(item == m_qListWidgetVector[i])
+        {
+            QString name = m_ActionListItemVector[i]->getInfo();
+            if(!strcmp(name.toStdString().c_str(),"持有物"))
+            {
+                Q_EMIT SIG_chiyouwu();
+            }
+        }
+    }
+}
