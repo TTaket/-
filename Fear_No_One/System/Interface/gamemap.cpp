@@ -152,10 +152,12 @@ void GameMap::drawPixmap(QPainter *painter){
         break;
     }
     painter->drawImage(0, 0, image);
-
-//    //根据人物坐标贴图
-//    //1.获取地图二维数组
-//    CGround_Map* groundMap = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1];
+    //根据人物坐标贴图
+    //1.获取地图二维数组
+        qDebug()<<CGameSystem::Checkpoint;
+        if(CGameSystem::Character_Info[0]){
+            qDebug()<<CGameSystem::Character_Info[0]->m_Id;
+        }
 //    //2.遍历二维数组进行贴图
 //    int i,j;
 //    int x,y;

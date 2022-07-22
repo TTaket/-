@@ -36,8 +36,7 @@ int main(int argc, char *argv[]){
     //    //提示 恭喜通关 反馈信息；
     //    CGameSystem::OverGame();
 
-
-    CGameSystem::OverGame();
+    //CGameSystem::OverGame();
     return a.exec();
 }
 

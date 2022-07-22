@@ -44,6 +44,8 @@ void CGameSystem::InitGame(){//初始化
 	CGameSystem::point_funid[_DEF_GET_POINTTOSIDE(1,14,4)] = 3;
 	CGameSystem::point_funid[_DEF_GET_POINTTOSIDE(1,11,6)] = 4;
 	CGameSystem::point_funid[_DEF_GET_POINTTOSIDE(1,15,10)] = 6;
+
+
 }
 
 
