@@ -70,6 +70,8 @@ public:
     static int Checkpoint;//第几关
     static int Money;//钱
 	
+    static int Sys_Window_Height;//游戏窗口的大小
+    static int Sys_Window_width;//游戏窗口的大小
     static int EnemyNum;//敌人数量-非敌全歼胜利条件的时候默认为 无穷大
     static int GAME_NEXT;//是否达到胜利条件进入下一关
     static int SaveSelect;//选择的存档编号
@@ -80,6 +82,8 @@ public:
 
 public:
     //游戏运行过程中的
-    static int using_peoid;
+    static int using_peoid;//当前选中的人物
+    static int Mouse_X;//当前鼠标X坐标
+    static int Mouse_Y;//当前鼠标y坐标
     static void change_using_peoid(int x);
 };

@@ -16,9 +16,15 @@ int CGameSystem::EnemyNum=0x3f3f3f3f;
 int CGameSystem::save01check =0;
 int CGameSystem::save02check =0;
 int CGameSystem::save03check =0;
+int CGameSystem::Sys_Window_Height;
+int CGameSystem::Sys_Window_width;
 int CGameSystem::using_peoid =0;
+int CGameSystem::Mouse_X =0;//当前鼠标X坐标
+int CGameSystem::Mouse_Y =0;//当前鼠标y坐标
 void CGameSystem::InitGame(){//初始化
 	//地图部分
+    Sys_Window_Height = 600;
+    Sys_Window_width = 900;
 	Money = 500;
 	Checkpoint = 1;
 	GAME_NEXT = 0;

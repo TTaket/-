@@ -1,6 +1,6 @@
 #ifndef GROUNDTYPEINFO_H
 #define GROUNDTYPEINFO_H
-
+#include <CGameSystem.h>
 #include <QWidget>
 
 namespace Ui {
@@ -14,6 +14,8 @@ class GroundTypeInfo : public QWidget
 public:
     explicit GroundTypeInfo(QWidget *parent = 0);
     ~GroundTypeInfo();
+    int ground_id;
+    void setInfo();//更新信息
 
 private:
     Ui::GroundTypeInfo *ui;

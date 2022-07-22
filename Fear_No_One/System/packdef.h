@@ -126,7 +126,31 @@
 		m_Attributes.Shuliandu_gong = 0;\
 		m_Attributes.Shuliandu_qiang = 0;\
 		m_Attributes.Shuliandu_fu = dengji/2+1;\
-		m_Attributes.Shuliandu_zhang = 0;
+        m_Attributes.Shuliandu_zhang = 0;\
+        m_iconPos ="../Fear_No_One/Resource/Character/Head/head-tufei.png";\
+        m_MappicPos[0][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/12.png";\
+        m_MappicPos[0][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/15.png";\
+        m_MappicPos[0][2] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/17.png";\
+        m_MappicPos[5][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/41.png";\
+        m_MappicPos[5][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/44.png";\
+        m_MappicPos[5][2] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/47.png";\
+        m_MappicPos[1][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/20.png";\
+        m_MappicPos[1][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/22.png";\
+        m_MappicPos[1][2] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/25.png";\
+        m_MappicPos[1][3] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/29.png";\
+        m_MappicPos[2][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/03.png";\
+        m_MappicPos[2][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/06.png";\
+        m_MappicPos[2][2] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/09.png";\
+        m_MappicPos[2][3] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/10.png";\
+        m_MappicPos[3][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/70.png";\
+        m_MappicPos[3][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/71.png";\
+        m_MappicPos[3][2] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/72.png";\
+        m_MappicPos[3][3] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/73.png";\
+        m_MappicPos[4][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/34.png";\
+        m_MappicPos[4][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/36.png";\
+        m_MappicPos[4][2] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/38.png";\
+        m_MappicPos[4][3] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/40.png";
+
 
 
 //Ground
@@ -185,6 +209,7 @@
 
 
 //make_scene
+//文件位置是否存档的时候应该写到存档里面
 //gethit..3个 ui交互
 //TODO：可优化内部优先级 领主》弓箭》剑士》骑士
 

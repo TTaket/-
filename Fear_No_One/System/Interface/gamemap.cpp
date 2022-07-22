@@ -76,9 +76,7 @@ GameMap::GameMap(QWidget *parent) :
     m_armChoice->addItem(item3);
     m_armChoice->createList();
 
-    //显示控件
-    m_peopleHpInfo->show();
-    m_groundTypeInfo->show();
+
 
     //鼠标捕获
     setMouseTracking(true);
@@ -152,6 +150,58 @@ void GameMap::drawPixmap(QPainter *painter){
         break;
     }
     painter->drawImage(0, 0, image);
+    //根据鼠标位置获得相对坐标
+    int Mouse_pos_relativelyX = CGameSystem::Mouse_X/60+1;
+    int Mouse_pos_relativelyY = (CGameSystem::Sys_Window_Height - CGameSystem::Mouse_Y)/60+1;
+
+
+    //显示控件peopleHpInfo 和 GroundTypeInfo
+    int tmppeople_id  = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[Mouse_pos_relativelyX][Mouse_pos_relativelyY];
+    if(CGameSystem::Character_Info[tmppeople_id -1]->m_Islive){
+        m_peopleHpInfo->people_id = tmppeople_id;
+    }
+    m_groundTypeInfo->ground_id  = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[Mouse_pos_relativelyX][Mouse_pos_relativelyY];
+    m_peopleHpInfo->setInfo();//更新数据
+    m_groundTypeInfo->setInfo();//更新数据
+    if(CGameSystem::Mouse_X >= CGameSystem::Sys_Window_width/2){
+            m_peopleHpInfo->move(0,0);
+            if(m_peopleHpInfo->people_id>0){
+                m_peopleHpInfo->show();
+            }
+            m_groundTypeInfo->move(0,CGameSystem::Sys_Window_Height-m_peopleHpInfo->height());
+            if(m_groundTypeInfo->ground_id>0){
+                m_groundTypeInfo->show();
+            }
+    }else{
+            m_peopleHpInfo->move(CGameSystem::Sys_Window_width-m_peopleHpInfo->width(),0);
+            if(m_peopleHpInfo->people_id>0){
+                m_peopleHpInfo->show();
+            }
+            m_groundTypeInfo->move(CGameSystem::Sys_Window_width-m_peopleHpInfo->width(),CGameSystem::Sys_Window_Height-m_peopleHpInfo->height());
+            if(m_groundTypeInfo->ground_id>0){
+                m_groundTypeInfo->show();
+            }
+    }
+
+
+    //贴光标
+    //友军贴光标3
+    //地面贴光标2
+    //敌军贴光标1
+    if(tmppeople_id == 0 || !(CGameSystem::Character_Info[tmppeople_id -1]->m_Islive)){//地面
+        image.load("../Fear_No_One/Resource/Photo/gb(2).png");
+    }else if(CGameSystem::Character_Info[tmppeople_id -1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei){
+        image.load("../Fear_No_One/Resource/Photo/gb(1).png");
+    }else{
+        image.load("../Fear_No_One/Resource/Photo/gb(3).png");
+    }
+    qDebug()<<"(Mouse_pos_relativelyX-1)*60 : "<<(Mouse_pos_relativelyX-1)*60;
+    qDebug()<<"(Mouse_pos_relativelyY-1)*60 : "<< (Mouse_pos_relativelyY-1)*60;
+    painter->drawImage((Mouse_pos_relativelyX-1)*60, (Mouse_pos_relativelyY-1)*60,image);
+    //
+
+
+
 
     //根据人物坐标贴图
     painter->setWindow(0, this->height(), this->width(), -(this->height()));
@@ -169,55 +219,49 @@ void GameMap::drawPixmap(QPainter *painter){
         {
             for(j=1;j<=groundMap->m_MapYmax;j++)
             {
-                if(groundMap->m_Peopleid[i][j] == 1) //罗伊
-                {
-                    //qDebug()<<"罗伊";
-                    image.load("../Fear_No_One/Resource/Character/Map_basic/zhujue/03.png");
-                    scaled_width = this->width()/groundMap->m_MapXmax;
-                    scaled_height = this->height()/groundMap->m_MapYmax;
-                    image = image.mirrored(true, true);
-                    image.scaled(scaled_width, scaled_height);
-                    x = this->width() / groundMap->m_MapXmax * (i-1) ;
-                    y = this->height() / groundMap->m_MapYmax * (j-1);
-                    painter->drawImage(x, y, image);
-                }
-                else if(groundMap->m_Peopleid[i][j] == 2) //李清
-                {
-                    //qDebug()<<"李清";
-                    image.load("../Fear_No_One/Resource/Character/Map_basic/qingqi/03.png");
-                    scaled_width = this->width()/groundMap->m_MapXmax;
-                    scaled_height = this->height()/groundMap->m_MapYmax;
-                    image = image.mirrored(true, true);
-                    image.scaled(scaled_width, scaled_height);
-                    x = this->width() / groundMap->m_MapXmax * (i-1) ;
-                    y = this->height() / groundMap->m_MapYmax * (j-1);
-                    painter->drawImage(x, y, image);
-                }
-                else if(groundMap->m_Peopleid[i][j] == 3) //皮古
-                {
-                    //qDebug()<<"皮古";
-                    image.load("../Fear_No_One/Resource/Character/Map_basic/zhongqi/03.png");
-                    scaled_width = this->width()/groundMap->m_MapXmax;
-                    scaled_height = this->height()/groundMap->m_MapYmax;
-                    image = image.mirrored(true, true);
-                    image.scaled(scaled_width, scaled_height);
-                    x = this->width() / groundMap->m_MapXmax * (i-1) ;
-                    y = this->height() / groundMap->m_MapYmax * (j-1);
-                    painter->drawImage(x, y, image);
-                }
+                  if(groundMap->m_Peopleid[i][j] !=0 && CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_Islive){
+                      image.load(CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_MappicPos[0][0]);
+                      scaled_width = this->width()/groundMap->m_MapXmax;
+                      scaled_height = this->height()/groundMap->m_MapYmax;
+                      image = image.mirrored(true, true);
+                      image.scaled(scaled_width, scaled_height);
+                      x = this->width() / groundMap->m_MapXmax * (i-1) ;
+                      y = this->height() / groundMap->m_MapYmax * (j-1);
+                      painter->drawImage(x, y, image);
+                  }
             }
         }
     }
 
     painter->restore();
 };
+//-----------------金光闪闪得李晶洋工作区域 ！！！！----------------------
+//---------------------
+//---------------------
+//---------------------1.重写鼠标移动 不断刷新 地皮信息和人物信息（左右双位置）
+//---------------------2.重写点击事件 获取人物id 获取点击位置的可移动链表
+//---------------------3.绘制链表
+//---------------------4.不断移动并且更新后台数据
+//---------------------5.调出功能链表
+//---------------------6.
 //鼠标捕获
+
 void GameMap::mouseMoveEvent(QMouseEvent *event)
 {
-    //QPoint po = QMouseEvent::pos();
+    CGameSystem::Mouse_X = event->x();
+    CGameSystem::Mouse_Y = event->y();
+    qDebug()<<"鼠标X的位置" << CGameSystem::Mouse_X;
+    qDebug()<<"鼠标Y的位置" << CGameSystem::Mouse_Y;
+    //test1 获取成功
+
+
 }
 
 
+//---------------------
+//---------------------
+//---------------------
+//-------------------------------------------------------------------
 //测试按钮
 void GameMap::on_pb_test_clicked()
 {
