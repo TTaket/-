@@ -38,7 +38,7 @@ public:
 	m_name = "悬崖";
 
 #define Ground_4_Init \
-	m_Move = 4;\
+    m_Move = 4;\
 	m_ablewalk = 1;\
 	m_name = "海洋";
 

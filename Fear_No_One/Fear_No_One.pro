@@ -46,7 +46,9 @@ SOURCES += \
     System/Interface/armchoice.cpp \
     System/Interface/arminfo.cpp \
     System/Interface/armlist.cpp \
-    System/Interface/armlistitem.cpp
+    System/Interface/armlistitem.cpp \
+    System/Interface/gamechoiceitem.cpp \
+    System/Interface/gamechoice2item.cpp
 
 HEADERS += \
     Data/Arms/Arms.h \
@@ -69,7 +71,9 @@ HEADERS += \
     System/Interface/armchoice.h \
     System/Interface/arminfo.h \
     System/Interface/armlist.h \
-    System/Interface/armlistitem.h
+    System/Interface/armlistitem.h \
+    System/Interface/gamechoiceitem.h \
+    System/Interface/gamechoice2item.h
 
 FORMS += \
     System/Interface/game.ui \
@@ -84,7 +88,6 @@ FORMS += \
     System/Interface/armchoice.ui \
     System/Interface/arminfo.ui \
     System/Interface/armlist.ui \
-    System/Interface/armlistitem.ui
-
-
-
+    System/Interface/armlistitem.ui \
+    System/Interface/gamechoiceitem.ui \
+    System/Interface/gamechoice2item.ui

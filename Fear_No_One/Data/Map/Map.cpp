@@ -7,6 +7,7 @@ CGround_Map::CGround_Map(int id):m_MapXmax(0),m_MapYmax(0){
 			m_IsSeeable[i][j] = 0;
 			m_Groundid[i][j] = 0;
 			m_Peopleid[i][j] = 0;
+            m_Color[i][j]=0;
 		}
 	}
 };

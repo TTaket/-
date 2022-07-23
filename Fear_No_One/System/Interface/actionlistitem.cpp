@@ -32,10 +32,13 @@ void ActionListItem::setFingerShow(bool enable)
 {
     if(enable)
     {
+//        QPixmap img;
+//        img.load()
         ui->lb_itemFinger->setText("Y");
     }
     else
     {
+        //ui->lb_itemFinger->setVisible(false);
         ui->lb_itemFinger->setText("");
     }
 }

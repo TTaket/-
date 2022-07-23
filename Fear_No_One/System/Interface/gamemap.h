@@ -65,6 +65,14 @@ public:
 //鼠标捕获
 public:
     void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+
+//键盘和移动相关
+public:
+    void keyPressEvent(QKeyEvent *event);
+    bool key_controlAble;
+    int Xreset;
+    int Yreset;
 };
 
 #endif // GAMEMAP_H

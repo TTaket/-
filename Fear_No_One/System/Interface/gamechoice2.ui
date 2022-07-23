@@ -47,51 +47,53 @@
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="MyButtonGameChoice" name="pb_choice2_1">
+  <widget class="GameChoice2Item" name="wd_chooseSave_1" native="true">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>140</y>
-     <width>641</width>
-     <height>81</height>
+     <x>130</x>
+     <y>130</y>
+     <width>120</width>
+     <height>80</height>
     </rect>
-   </property>
-   <property name="text">
-    <string>选择存档</string>
    </property>
   </widget>
-  <widget class="MyButtonGameChoice" name="pb_choice2_2">
+  <widget class="GameChoice2Item" name="wd_chooseSave_2" native="true">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>270</y>
-     <width>641</width>
-     <height>81</height>
+     <x>130</x>
+     <y>230</y>
+     <width>120</width>
+     <height>80</height>
     </rect>
-   </property>
-   <property name="text">
-    <string>选择存档</string>
    </property>
   </widget>
-  <widget class="MyButtonGameChoice" name="pb_choice2_3">
+  <widget class="GameChoice2Item" name="wd_chooseSave_3" native="true">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>400</y>
-     <width>641</width>
-     <height>81</height>
+     <x>130</x>
+     <y>330</y>
+     <width>120</width>
+     <height>80</height>
     </rect>
    </property>
-   <property name="text">
-    <string>选择存档</string>
+  </widget>
+  <widget class="GameChoice2Item" name="wd_return" native="true">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>430</y>
+     <width>120</width>
+     <height>80</height>
+    </rect>
    </property>
   </widget>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MyButtonGameChoice</class>
-   <extends>QPushButton</extends>
-   <header location="global">mybuttongamechoice.h</header>
+   <class>GameChoice2Item</class>
+   <extends>QWidget</extends>
+   <header location="global">gamechoice2item.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

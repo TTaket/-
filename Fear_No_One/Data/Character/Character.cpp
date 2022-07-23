@@ -153,25 +153,25 @@ std::list<CArm*> Character::Able_UsedtoATK(){
 			continue;
 		}
 		bool ispeo = 0;
-        if(m_NowX-(*it)->m_Juli>0 && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX-(*it)->m_Juli][m_NowY]){
-            if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX-(*it)->m_Juli][m_NowY]-1]->m_Islive)
-                ispeo = 1;
-        }
-        if(m_NowY-(*it)->m_Juli>0 && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX][m_NowY-(*it)->m_Juli]){
-            if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX][m_NowY-(*it)->m_Juli]-1]->m_Islive)
-                ispeo = 1;
-        }
-        if(m_NowX+(*it)->m_Juli<=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapXmax && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX+(*it)->m_Juli][m_NowY]){
-            if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX+(*it)->m_Juli][m_NowY]-1]->m_Islive)
-                ispeo = 1;
-        }
-        if(m_NowY+(*it)->m_Juli<=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapYmax && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX][m_NowY+(*it)->m_Juli]){
-            if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX][m_NowY+(*it)->m_Juli]-1]->m_Islive)
-                ispeo = 1;
-        }
-		if(ispeo){
+//        if(m_NowX-(*it)->m_Juli>0 && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX-(*it)->m_Juli][m_NowY]){
+//            if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX-(*it)->m_Juli][m_NowY]-1]->m_Islive)
+//                ispeo = 1;
+//        }
+//        if(m_NowY-(*it)->m_Juli>0 && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX][m_NowY-(*it)->m_Juli]){
+//            if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX][m_NowY-(*it)->m_Juli]-1]->m_Islive)
+//                ispeo = 1;
+//        }
+//        if(m_NowX+(*it)->m_Juli<=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapXmax && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX+(*it)->m_Juli][m_NowY]){
+//            if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX+(*it)->m_Juli][m_NowY]-1]->m_Islive)
+//                ispeo = 1;
+//        }
+//        if(m_NowY+(*it)->m_Juli<=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapYmax && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX][m_NowY+(*it)->m_Juli]){
+//            if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[m_NowX][m_NowY+(*it)->m_Juli]-1]->m_Islive)
+//                ispeo = 1;
+//        }
+//		if(ispeo){
 			ans.push_back(*it);
-		}
+//		}
 	}
 	return ans;
 };

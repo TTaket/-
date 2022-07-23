@@ -13,7 +13,7 @@ int CGameSystem::SaveSelect = 0;
 bool CGameSystem::WoFangXingDong = 0;
 int CGameSystem::EnemyNum=0x3f3f3f3f;
 
-int CGameSystem::save01check =0;
+int CGameSystem::save01check =0; //标记着存档1在第几关
 int CGameSystem::save02check =0;
 int CGameSystem::save03check =0;
 int CGameSystem::Sys_Window_Height;
@@ -853,6 +853,7 @@ std::list<MoveInfo*> CGameSystem::Able_UsedtoMove(int id){
     int Maxmapy =CGameSystem::CGround_Map_Info[Checkpoint-1]->m_MapYmax;
     int visMap[_DEF_MAP_MAX][_DEF_MAP_MAX]={};
     int MoveAbility = CGameSystem::Character_Info[id-1]->m_Attributes.Sudu/4+2;
+    qDebug() << "Able_UsedtoMove : 移动力为 : "<< MoveAbility;
     //考虑移动力 -- >可到达地方标蓝 蓝色区域内的敌人标红
     MoveInfo *pos = new MoveInfo{CGameSystem::Character_Info[id-1]->m_NowX ,CGameSystem::Character_Info[id-1]->m_NowY,_DEF_COLOR_GROUND_BLUE,0};
     visMap[CGameSystem::Character_Info[id-1]->m_NowX][CGameSystem::Character_Info[id-1]->m_NowY] = _DEF_COLOR_GROUND_BLUE;
@@ -863,16 +864,19 @@ std::list<MoveInfo*> CGameSystem::Able_UsedtoMove(int id){
         int ynow = q.top()->y;
         int stepnow = q.top()->step;
         q.pop();
+        if(visMap[xnow][ynow] == _DEF_COLOR_GROUND_RED){
+            continue;
+        }
         //左
-        if(xnow-1>0){
-            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow-1][ynow]]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint]->m_Peopleid[xnow-1][ynow]!=0){
-                MoveInfo *pos = new MoveInfo{xnow-1 ,ynow, _DEF_COLOR_GROUND_RED,0};
+        if(xnow-1>0 && !visMap[xnow-1][ynow]){
+            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow-1][ynow]-1]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow-1][ynow]!=0){
+                MoveInfo *pos = new MoveInfo{xnow-1 ,ynow, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                 ans.push_back(pos);
                 visMap[xnow-1][ynow] = _DEF_COLOR_GROUND_RED;
-            }else if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow-1][ynow]]->m_Move <= MoveAbility){
+            }else if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow-1][ynow]-1]->m_Move <= MoveAbility){
                 if(visMap[xnow-1][ynow] != _DEF_COLOR_GROUND_BLUE){
-                    MoveInfo *pos = new MoveInfo{xnow-1 ,ynow, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow-1][ynow]]->m_Move};
-                    if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow-1][ynow]]->m_Move < MoveAbility){
+                    MoveInfo *pos = new MoveInfo{xnow-1 ,ynow, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow-1][ynow]-1]->m_Move};
+                    if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow-1][ynow]-1]->m_Move < MoveAbility){
                         q.push(pos);
                     }
                     ans.push_back(pos);
@@ -881,15 +885,15 @@ std::list<MoveInfo*> CGameSystem::Able_UsedtoMove(int id){
             }
         }
         //下
-        if(ynow-1>0){
-            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow-1]]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint]->m_Peopleid[xnow][ynow-1]!=0){
-                MoveInfo *pos = new MoveInfo{xnow ,ynow-1, _DEF_COLOR_GROUND_RED,0};
+        if(ynow-1>0&& !visMap[xnow][ynow-1]){
+            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow-1]-1]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow][ynow-1]!=0){
+                MoveInfo *pos = new MoveInfo{xnow ,ynow-1, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                 ans.push_back(pos);
                 visMap[xnow][ynow-1] = _DEF_COLOR_GROUND_RED;
-            }else if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow-1]]->m_Move <= MoveAbility){
+            }else if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow-1]-1]->m_Move <= MoveAbility){
                 if(visMap[xnow][ynow-1] != _DEF_COLOR_GROUND_BLUE){
-                    MoveInfo *pos = new MoveInfo{xnow ,ynow-1, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow-1]]->m_Move};
-                    if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow-1]]->m_Move < MoveAbility){
+                    MoveInfo *pos = new MoveInfo{xnow ,ynow-1, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow-1]-1]->m_Move};
+                    if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow-1]-1]->m_Move < MoveAbility){
                         q.push(pos);
                     }
                     ans.push_back(pos);
@@ -898,15 +902,15 @@ std::list<MoveInfo*> CGameSystem::Able_UsedtoMove(int id){
             }
         }
         //右
-        if(xnow+1<=Maxmapx){
-            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow+1][ynow]]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint]->m_Peopleid[xnow+1][ynow]!=0){
-                MoveInfo *pos = new MoveInfo{xnow+1 ,ynow, _DEF_COLOR_GROUND_RED,0};
+        if(xnow+1<=Maxmapx&& !visMap[xnow+1][ynow]){
+            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow+1][ynow]-1]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow+1][ynow]!=0){
+                MoveInfo *pos = new MoveInfo{xnow+1 ,ynow, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                 ans.push_back(pos);
                 visMap[xnow+1][ynow] = _DEF_COLOR_GROUND_RED;
-            }else if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow+1][ynow]]->m_Move <= MoveAbility){
+            }else if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow+1][ynow]-1]->m_Move <= MoveAbility){
                 if(visMap[xnow+1][ynow] != _DEF_COLOR_GROUND_BLUE){
-                    MoveInfo *pos = new MoveInfo{xnow+1 ,ynow, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow+1][ynow]]->m_Move};
-                    if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow+1][ynow]]->m_Move < MoveAbility){
+                    MoveInfo *pos = new MoveInfo{xnow+1 ,ynow, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow+1][ynow]-1]->m_Move};
+                    if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow+1][ynow]-1]->m_Move < MoveAbility){
                         q.push(pos);
                     }
                     ans.push_back(pos);
@@ -915,15 +919,15 @@ std::list<MoveInfo*> CGameSystem::Able_UsedtoMove(int id){
             }
         }
         //上
-        if(ynow+1<=Maxmapy){
-            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow+1]]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint]->m_Peopleid[xnow][ynow+1]!=0){
-                MoveInfo *pos = new MoveInfo{xnow ,ynow+1, _DEF_COLOR_GROUND_RED,0};
+        if(ynow+1<=Maxmapy&& !visMap[xnow][ynow+1]){
+            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow+1]-1]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow][ynow+1]!=0){
+                MoveInfo *pos = new MoveInfo{xnow ,ynow+1, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                 ans.push_back(pos);
                 visMap[xnow][ynow+1] = _DEF_COLOR_GROUND_RED;
-            }else if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow+1]]->m_Move <= MoveAbility){
+            }else if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow+1]-1]->m_Move <= MoveAbility){
                 if(visMap[xnow][ynow+1] != _DEF_COLOR_GROUND_BLUE){
-                    MoveInfo *pos = new MoveInfo{xnow ,ynow+1, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow+1]]->m_Move};
-                    if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow+1]]->m_Move < MoveAbility){
+                    MoveInfo *pos = new MoveInfo{xnow ,ynow+1, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow+1]-1]->m_Move};
+                    if(stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow+1]-1]->m_Move < MoveAbility){
                         q.push(pos);
                     }
                     ans.push_back(pos);
@@ -949,28 +953,28 @@ std::list<MoveInfo*> CGameSystem::Able_UsedtoMove(int id){
             //左
             if(xnow-atkroundnow>0){
                 if(!visMap[xnow-atkroundnow][ynow]){
-                    MoveInfo *pos = new MoveInfo{xnow-atkroundnow ,ynow, _DEF_COLOR_GROUND_RED,0};
+                    MoveInfo *pos = new MoveInfo{xnow-atkroundnow ,ynow, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                     ans.push_back(pos);
                 }
             }
             //下
             if(ynow-atkroundnow>0){
                  if(!visMap[xnow][ynow-atkroundnow]){
-                     MoveInfo *pos = new MoveInfo{xnow ,ynow-atkroundnow, _DEF_COLOR_GROUND_RED,0};
+                     MoveInfo *pos = new MoveInfo{xnow ,ynow-atkroundnow, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                      ans.push_back(pos);
                  }
             }
             //右
             if(xnow+atkroundnow<=Maxmapx){
                 if(!visMap[xnow+atkroundnow][ynow]){
-                    MoveInfo *pos = new MoveInfo{xnow+atkroundnow ,ynow, _DEF_COLOR_GROUND_RED,0};
+                    MoveInfo *pos = new MoveInfo{xnow+atkroundnow ,ynow, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                     ans.push_back(pos);
                 }
             }
             //上
             if(ynow+atkroundnow<=Maxmapy){
                 if(!visMap[xnow][ynow+atkroundnow]){
-                    MoveInfo *pos = new MoveInfo{xnow ,ynow+atkroundnow, _DEF_COLOR_GROUND_RED,0};
+                    MoveInfo *pos = new MoveInfo{xnow ,ynow+atkroundnow, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                     ans.push_back(pos);
                 }
             }

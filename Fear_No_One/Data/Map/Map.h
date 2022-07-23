@@ -15,6 +15,7 @@ public:
     bool m_IsSeeable[_DEF_MAP_MAX][_DEF_MAP_MAX];//是否可视
     int m_Groundid[_DEF_MAP_MAX][_DEF_MAP_MAX];  //地皮id
     int m_Peopleid[_DEF_MAP_MAX][_DEF_MAP_MAX];  //人id
+    int m_Color[_DEF_MAP_MAX][_DEF_MAP_MAX];//颜色;
 public:
 	void InitCGround_Map();
 };

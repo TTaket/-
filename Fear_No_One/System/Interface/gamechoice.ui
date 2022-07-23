@@ -25,145 +25,63 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="MyButtonGameChoice" name="pb_continue">
+  <widget class="GameChoiceItem" name="wd_start" native="true">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>40</y>
-     <width>241</width>
-     <height>51</height>
+     <x>260</x>
+     <y>60</y>
+     <width>120</width>
+     <height>80</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>华光秀丽_CNKI</family>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>继续中断的游戏</string>
-   </property>
   </widget>
-  <widget class="MyButtonGameChoice" name="pb_read">
+  <widget class="GameChoiceItem" name="wd_continue" native="true">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>120</y>
-     <width>241</width>
-     <height>51</height>
+     <x>260</x>
+     <y>160</y>
+     <width>120</width>
+     <height>80</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>华光秀丽_CNKI</family>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>读取记录的游戏</string>
-   </property>
   </widget>
-  <widget class="MyButtonGameChoice" name="pb_copy">
+  <widget class="GameChoiceItem" name="wd_copy" native="true">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>200</y>
-     <width>241</width>
-     <height>51</height>
+     <x>260</x>
+     <y>260</y>
+     <width>120</width>
+     <height>80</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>华光秀丽_CNKI</family>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>复制记录</string>
-   </property>
   </widget>
-  <widget class="MyButtonGameChoice" name="pb_delete">
+  <widget class="GameChoiceItem" name="wd_delete" native="true">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>280</y>
-     <width>241</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>华光秀丽_CNKI</family>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>删除记录</string>
-   </property>
-  </widget>
-  <widget class="MyButtonGameChoice" name="pb_startNew">
-   <property name="geometry">
-    <rect>
-     <x>330</x>
+     <x>260</x>
      <y>360</y>
-     <width>241</width>
-     <height>51</height>
+     <width>120</width>
+     <height>80</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>华光秀丽_CNKI</family>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>开始新的游戏</string>
    </property>
   </widget>
-  <widget class="MyButtonGameChoice" name="pb_add">
+  <widget class="GameChoiceItem" name="wd_return" native="true">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>440</y>
-     <width>241</width>
-     <height>51</height>
+     <x>260</x>
+     <y>460</y>
+     <width>120</width>
+     <height>80</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>华光秀丽_CNKI</family>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>附加内容</string>
-   </property>
-  </widget>
-  <widget class="MyButtonGameChoice" name="pb_returnLastPage">
-   <property name="geometry">
-    <rect>
-     <x>330</x>
-     <y>520</y>
-     <width>241</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>华光秀丽_CNKI</family>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>返回上一页</string>
    </property>
   </widget>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MyButtonGameChoice</class>
-   <extends>QPushButton</extends>
-   <header location="global">mybuttongamechoice.h</header>
+   <class>GameChoiceItem</class>
+   <extends>QWidget</extends>
+   <header location="global">gamechoiceitem.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

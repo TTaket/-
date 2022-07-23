@@ -16,8 +16,10 @@ GameMap::GameMap(QWidget *parent) :
     m_armChoice(NULL)
 {
     ui->setupUi(this);
-
-
+    //this->setCursor(Qt::BlankCursor);   //隐藏鼠标
+    //this->setCursor(Qt::ArrowCursor);  //显示正常鼠标
+    //阻止随便控制键盘
+    key_controlAble = 0;
     //创建控件
     m_peopleHpInfo = new PeopleHpInfo(this); //括号里指定父窗口
     m_groundTypeInfo = new GroundTypeInfo(this);
@@ -64,19 +66,6 @@ GameMap::GameMap(QWidget *parent) :
 
     m_armChoice->hide();
     m_armChoice->setGeometry(350,0,200,160);
-    m_armChoice->deleteItemList();
-    ActionListItem* item1 = new ActionListItem;
-    item1->setInfo("装备");
-    m_armChoice->addItem(item1);
-    ActionListItem* item2 = new ActionListItem;
-    item2->setInfo("交换");
-    m_armChoice->addItem(item2);
-    ActionListItem* item3 = new ActionListItem;
-    item3->setInfo("舍去");
-    m_armChoice->addItem(item3);
-    m_armChoice->createList();
-
-
 
     //鼠标捕获
     setMouseTracking(true);
@@ -127,14 +116,14 @@ void GameMap::updateMap()
 //绘制地图
 void GameMap::paintEvent(QPaintEvent *event){
     QPainter painter(this);
-    //painter.begin(this);
     drawPixmap(&painter);
-    //painter.end();
 };
+
 void GameMap::drawPixmap(QPainter *painter){
     painter->save();
 
     QImage image;
+
     switch (CGameSystem::Checkpoint) {
         case 1:
             image.load("../Fear_No_One/Resource/Map/Map_Resource-01.png");
@@ -150,6 +139,10 @@ void GameMap::drawPixmap(QPainter *painter){
         break;
     }
     painter->drawImage(0, 0, image);
+
+    painter->setWindow(0, this->height(), this->width(), -(this->height()));
+
+
     //根据鼠标位置获得相对坐标
     int Mouse_pos_relativelyX = CGameSystem::Mouse_X/60+1;
     int Mouse_pos_relativelyY = (CGameSystem::Sys_Window_Height - CGameSystem::Mouse_Y)/60+1;
@@ -157,9 +150,14 @@ void GameMap::drawPixmap(QPainter *painter){
 
     //显示控件peopleHpInfo 和 GroundTypeInfo
     int tmppeople_id  = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[Mouse_pos_relativelyX][Mouse_pos_relativelyY];
-    if(CGameSystem::Character_Info[tmppeople_id -1]->m_Islive){
+
+    if(tmppeople_id == 0){
+        m_peopleHpInfo->people_id = 0;
+    }else if(CGameSystem::Character_Info[tmppeople_id -1]->m_Islive){
         m_peopleHpInfo->people_id = tmppeople_id;
     }
+
+
     m_groundTypeInfo->ground_id  = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[Mouse_pos_relativelyX][Mouse_pos_relativelyY];
     m_peopleHpInfo->setInfo();//更新数据
     m_groundTypeInfo->setInfo();//更新数据
@@ -184,27 +182,32 @@ void GameMap::drawPixmap(QPainter *painter){
     }
 
 
+    //这里有问题，光标没有随着鼠标移动
     //贴光标
     //友军贴光标3
     //地面贴光标2
     //敌军贴光标1
-    if(tmppeople_id == 0 || !(CGameSystem::Character_Info[tmppeople_id -1]->m_Islive)){//地面
-        image.load("../Fear_No_One/Resource/Photo/gb(2).png");
-    }else if(CGameSystem::Character_Info[tmppeople_id -1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei){
-        image.load("../Fear_No_One/Resource/Photo/gb(1).png");
+    if(key_controlAble == 0){
+        if(tmppeople_id == 0 || !(CGameSystem::Character_Info[tmppeople_id -1]->m_Islive)){//地面
+            //qDebug()<<"地面";
+            image.load("../Fear_No_One/Resource/Photo/gb(2).png");
+
+        }else if(CGameSystem::Character_Info[tmppeople_id -1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei){
+            //qDebug()<<"土匪";
+            image.load("../Fear_No_One/Resource/Photo/gb(1).png");
+        }else{
+            //qDebug()<<"友军";
+            image.load("../Fear_No_One/Resource/Photo/gb(3).png");
+        }
+        //qDebug()<<"(Mouse_pos_relativelyX-1)*60 : "<< (Mouse_pos_relativelyX-1)*60;
+        //qDebug()<<"(Mouse_pos_relativelyY-1)*60 : "<< (Mouse_pos_relativelyY-1)*60;
+        painter->drawImage((Mouse_pos_relativelyX-1)*60, (Mouse_pos_relativelyY-1)*60, image);
     }else{
-        image.load("../Fear_No_One/Resource/Photo/gb(3).png");
+         image.load("../Fear_No_One/Resource/Photo/gb(4).png");
+         painter->drawImage((CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX-1)*60, (CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY-1)*60, image);
     }
-    qDebug()<<"(Mouse_pos_relativelyX-1)*60 : "<<(Mouse_pos_relativelyX-1)*60;
-    qDebug()<<"(Mouse_pos_relativelyY-1)*60 : "<< (Mouse_pos_relativelyY-1)*60;
-    painter->drawImage((Mouse_pos_relativelyX-1)*60, (Mouse_pos_relativelyY-1)*60,image);
-    //
-
-
-
 
     //根据人物坐标贴图
-    painter->setWindow(0, this->height(), this->width(), -(this->height()));
     //1.获取地图二维数组
     CGround_Map* groundMap = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1];
 
@@ -231,6 +234,27 @@ void GameMap::drawPixmap(QPainter *painter){
                   }
             }
         }
+        //3.遍历二维数组进行地图贴图
+
+        for(i=1;i<=groundMap->m_MapXmax;i++)
+        {
+            for(j=1;j<=groundMap->m_MapYmax;j++)
+            {
+                  if(groundMap->m_Color [i][j] !=0){
+                      if(groundMap->m_Color [i][j] == _DEF_COLOR_GROUND_BLUE)
+                        image.load("../Fear_No_One/Resource/Photo/Move_blue.png");
+                      if(groundMap->m_Color [i][j] == _DEF_COLOR_GROUND_RED)
+                        image.load("../Fear_No_One/Resource/Photo/Move_red.png");
+                      scaled_width = this->width()/groundMap->m_MapXmax;
+                      scaled_height = this->height()/groundMap->m_MapYmax;
+                      image = image.mirrored(true, true);
+                      image.scaled(scaled_width, scaled_height);
+                      x = this->width() / groundMap->m_MapXmax * (i-1) ;
+                      y = this->height() / groundMap->m_MapYmax * (j-1);
+                      painter->drawImage(x, y, image);
+                  }
+            }
+        }
     }
 
     painter->restore();
@@ -244,8 +268,9 @@ void GameMap::drawPixmap(QPainter *painter){
 //---------------------4.不断移动并且更新后台数据
 //---------------------5.调出功能链表
 //---------------------6.
-//鼠标捕获
 
+
+//鼠标捕获
 void GameMap::mouseMoveEvent(QMouseEvent *event)
 {
     CGameSystem::Mouse_X = event->x();
@@ -254,9 +279,126 @@ void GameMap::mouseMoveEvent(QMouseEvent *event)
     qDebug()<<"鼠标Y的位置" << CGameSystem::Mouse_Y;
     //test1 获取成功
 
-
+    updateMap();
 }
 
+//单点显示显示可行走范围
+
+void GameMap::mousePressEvent(QMouseEvent *event){
+    //根据鼠标位置获得相对坐标
+    int Mouse_pos_relativelyX = CGameSystem::Mouse_X/60+1;
+    int Mouse_pos_relativelyY = (CGameSystem::Sys_Window_Height - CGameSystem::Mouse_Y)/60+1;
+
+    qDebug()<<"单击：鼠标X的相对位置" << Mouse_pos_relativelyX;
+    qDebug()<<"单击：鼠标Y的相对位置" << Mouse_pos_relativelyY;
+
+    int tmppeople_id  = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[Mouse_pos_relativelyX][Mouse_pos_relativelyY];
+    if(!tmppeople_id || !CGameSystem::Character_Info[tmppeople_id -1]->m_Islive ||CGameSystem::Character_Info[tmppeople_id -1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei )  {//特例退出
+        return;
+    }
+    CGameSystem::change_using_peoid(tmppeople_id);
+    //获取颜色
+    std::list<MoveInfo*> up_color = CGameSystem::Able_UsedtoMove(tmppeople_id);
+    qDebug()<< QString::fromStdString(CGameSystem::Character_Info[tmppeople_id-1]->m_name);
+    //更新颜色并回收
+    for(auto it = up_color.begin();it !=up_color.end();it++){
+        qDebug()<<"x : " << (*it)->x << "-   y : " << (*it)->y << " 地图颜色更新";
+        qDebug()<<"step : " << (*it)->step ;
+        CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color[(*it)->x][(*it)->y] = (*it)->color;
+        delete (*it);
+    }
+    up_color.clear();
+    updateMap();
+    //移动事件
+    Xreset = CGameSystem::Mouse_X/60+1;//设置复位值
+    Yreset = (CGameSystem::Sys_Window_Height - CGameSystem::Mouse_Y)/60+1;//设置复位值
+    this->setAttribute(Qt::WA_TransparentForMouseEvents, true);//先禁用鼠标
+    key_controlAble = 1;//允许键盘控制/启动键盘控制
+
+
+    }
+
+
+
+
+//键盘的控制
+void GameMap::keyPressEvent(QKeyEvent *event){
+     if(!key_controlAble){
+         return;
+     }
+
+     int op = event->key();
+     qDebug()<<"收到键盘信号 : " << op;
+     switch(op){
+            case Qt::Key_W:
+             qDebug("The key you Pressed is : ↑ \n");
+             CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = 0;
+             if(CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY <CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapYmax && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY+1] == _DEF_COLOR_GROUND_BLUE)
+                 CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY++;
+             CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = CGameSystem::using_peoid;
+             updateMap();
+             break;
+          case Qt::Key_S:
+             qDebug("The key you Pressed is : ↓ \n");
+             CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = 0;
+             if(CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY >0 && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY-1] == _DEF_COLOR_GROUND_BLUE)
+                 CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY--;
+             CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = CGameSystem::using_peoid;
+             updateMap();
+             break;
+          case Qt::Key_A:
+             qDebug("The key you Pressed is : ← \n");
+             CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = 0;
+             if(CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX >0  && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX-1][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] == _DEF_COLOR_GROUND_BLUE)
+                 CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX--;
+             CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = CGameSystem::using_peoid;
+             updateMap();
+             break;
+          case Qt::Key_D:
+             qDebug("The key you Pressed is : → \n");
+             CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = 0;
+             if(CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX <CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapXmax && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX+1][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] == _DEF_COLOR_GROUND_BLUE)
+                 CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX++;
+             CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = CGameSystem::using_peoid;
+             updateMap();
+             break;
+          case Qt::Key_Enter:{
+             qDebug("The key you Pressed is : Enter \n");
+             //TODO: 调用行动函数;
+             //清除色层
+             memset(CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color , 0 , sizeof CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color);
+             updateMap();
+             Xreset = 0,Yreset = 0;//清空移动重设;
+             CGameSystem::change_using_peoid(0);
+             this->setAttribute(Qt::WA_TransparentForMouseEvents, false);//回复鼠标;
+             key_controlAble = 0;//结束控制
+             break;
+            }
+         case Qt::Key_Escape://esc
+            qDebug("The key you Pressed is : ESC \n");
+            if(CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX != Xreset || CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY != Yreset){//非原点esc 就是 回到原点
+                CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = 0;
+                CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX = Xreset;
+                CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY = Yreset;
+                CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = CGameSystem::using_peoid;
+                updateMap();
+            }else{//在原点esc 就是 退出控制
+                //清除色层
+                memset(CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color , 0 , sizeof CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color);
+                updateMap();
+                Xreset = 0,Yreset = 0;//清空移动重设;
+                CGameSystem::change_using_peoid(0);
+                this->setAttribute(Qt::WA_TransparentForMouseEvents, false);//回复鼠标;
+                key_controlAble = 0;//结束控制
+            }
+
+            break;
+        default:
+            qDebug("键盘匹配失败");
+            break;
+         updateMap();
+     }
+}
 
 //---------------------
 //---------------------
@@ -267,6 +409,8 @@ void GameMap::on_pb_test_clicked()
 {
     m_actionList->hide();
     m_armList->hide();
+    m_armInfo->hide();
+    m_armChoice->hide();
 
     m_actionList->deleteItemList();
 
@@ -404,6 +548,22 @@ void GameMap::slot_armInfoShow(QString armName)
 //武器选择信息（装备，交换，舍去）信号槽函数
 void GameMap::slot_armChoice()
 {
+    m_armChoice->deleteItemList();
+
+    ActionListItem* item1 = new ActionListItem;
+    item1->setInfo("装备");
+    m_armChoice->addItem(item1);
+
+    ActionListItem* item2 = new ActionListItem;
+    item2->setInfo("交换");
+    m_armChoice->addItem(item2);
+
+    ActionListItem* item3 = new ActionListItem;
+    item3->setInfo("舍去");
+    m_armChoice->addItem(item3);
+
+    m_armChoice->createList();
+
     m_armChoice->show();
 }
 

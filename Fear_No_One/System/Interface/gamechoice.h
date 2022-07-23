@@ -21,9 +21,11 @@ public:
     void drawPixmap(QPainter *painter);
 
 private slots:
-    void on_pb_startNew_clicked();
-
-    void on_pb_returnLastPage_clicked();
+    void slot_pb_continue();
+    void slot_pb_start();
+    void slot_pb_return();
+    void slot_pb_delete();
+    void slot_pb_copy();
 
 signals:
     void SIG_jumpWidget(int id);

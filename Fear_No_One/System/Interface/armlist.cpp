@@ -128,5 +128,10 @@ void ArmList::on_lw_armList_itemClicked(QListWidgetItem *item)
 //双击选择
 void ArmList::on_lw_armList_itemDoubleClicked(QListWidgetItem *item)
 {
+    //在武器列表双击选择武器后，如果前一个动作是"物品",则显示“装备，交换，舍去”三个选项
     Q_EMIT SIG_armChoice();
+
+    //但是如果前一个动作是"攻击", 则选择武器后，要显示攻击界面。
+
+    //如何在“同一个武器列表双击事件中”区分前一个动作并执行下一个动作？？？
 }

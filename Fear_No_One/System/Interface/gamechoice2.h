@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <Qpainter>
+#include <CGameSystem.h>
 namespace Ui {
 class GameChoice2;
 }
@@ -19,9 +20,10 @@ public:
     void drawPixmap(QPainter *painter);
 
 private slots:
-    void on_pb_returnLastPage_clicked();
-
-    void on_pb_choice2_1_clicked();
+    void slot_pb_save1();
+    void slot_pb_save2();
+    void slot_pb_save3();
+    void slot_pb_return();
 
 signals:
     void SIG_jumpWidget(int id);
