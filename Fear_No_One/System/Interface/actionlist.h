@@ -22,6 +22,8 @@ public:
     void deleteItemList();
     void updateList();
     void createList();
+    //劫持test
+
 
 private slots:
     //处理单击选中

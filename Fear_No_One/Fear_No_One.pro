@@ -43,12 +43,15 @@ SOURCES += \
     System/main.cpp \
     System/Interface/actionlistitem.cpp \
     System/Interface/actionlist.cpp \
-    System/Interface/armchoice.cpp \
     System/Interface/arminfo.cpp \
     System/Interface/armlist.cpp \
     System/Interface/armlistitem.cpp \
     System/Interface/gamechoiceitem.cpp \
-    System/Interface/gamechoice2item.cpp
+    System/Interface/gamechoice2item.cpp \
+    System/Interface/attackreadyinfo.cpp \
+    System/Interface/tufeilistitem.cpp \
+    System/Interface/tufeilist.cpp \
+    System/Interface/changepeoplelist.cpp
 
 HEADERS += \
     Data/Arms/Arms.h \
@@ -68,12 +71,15 @@ HEADERS += \
     System/packdef.h \
     System/Interface/actionlistitem.h \
     System/Interface/actionlist.h \
-    System/Interface/armchoice.h \
     System/Interface/arminfo.h \
     System/Interface/armlist.h \
     System/Interface/armlistitem.h \
     System/Interface/gamechoiceitem.h \
-    System/Interface/gamechoice2item.h
+    System/Interface/gamechoice2item.h \
+    System/Interface/attackreadyinfo.h \
+    System/Interface/tufeilistitem.h \
+    System/Interface/tufeilist.h \
+    System/Interface/changepeoplelist.h
 
 FORMS += \
     System/Interface/game.ui \
@@ -85,9 +91,12 @@ FORMS += \
     System/Interface/peoplehpinfo.ui \
     System/Interface/actionlistitem.ui \
     System/Interface/actionlist.ui \
-    System/Interface/armchoice.ui \
     System/Interface/arminfo.ui \
     System/Interface/armlist.ui \
     System/Interface/armlistitem.ui \
     System/Interface/gamechoiceitem.ui \
-    System/Interface/gamechoice2item.ui
+    System/Interface/gamechoice2item.ui \
+    System/Interface/attackreadyinfo.ui \
+    System/Interface/tufeilistitem.ui \
+    System/Interface/tufeilist.ui \
+    System/Interface/changepeoplelist.ui

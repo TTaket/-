@@ -28,8 +28,8 @@ private slots:
     void on_lw_armList_itemDoubleClicked(QListWidgetItem *item);
 
 signals:
-    void SIG_armInfoShow(QString armName);
-    void SIG_armChoice();
+    void SIG_armInfoShow(CArm* Armnow);
+    void SIG_armChoice(CArm* Armnow);
 
 private:
     Ui::ArmList *ui;

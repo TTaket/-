@@ -1,5 +1,6 @@
 #include "gamechoice2.h"
 #include "ui_gamechoice2.h"
+#include <QDebug>
 
 GameChoice2::GameChoice2(QWidget *parent) :
     QWidget(parent),
@@ -7,9 +8,14 @@ GameChoice2::GameChoice2(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->wd_chooseSave_1->setInfo("存档1");
-    ui->wd_chooseSave_2->setInfo("存档2");
-    ui->wd_chooseSave_3->setInfo("存档3");
+    CGameSystem::Savemanage_Du();
+    qDebug()<<"save01check = "<<CGameSystem::save01check;
+    qDebug()<<"save02check = "<<CGameSystem::save02check;
+    qDebug()<<"save03check = "<<CGameSystem::save03check;
+
+    ui->wd_chooseSave_1->setInfo(QString("存档1 : 第%1关").arg(CGameSystem::save01check));
+    ui->wd_chooseSave_2->setInfo(QString("存档2 : 第%1关").arg(CGameSystem::save02check));
+    ui->wd_chooseSave_3->setInfo(QString("存档3 : 第%1关").arg(CGameSystem::save03check));
     ui->wd_return->setInfo("返回上一页");
 
     QObject::connect(ui->wd_chooseSave_1,
@@ -31,6 +37,7 @@ GameChoice2::GameChoice2(QWidget *parent) :
                      SIGNAL(SIG_pb_return()),
                      this,
                      SLOT(slot_pb_return()));
+
 }
 
 GameChoice2::~GameChoice2()
@@ -53,20 +60,26 @@ void GameChoice2::drawPixmap(QPainter *painter){
 //选择存档1
 void GameChoice2::slot_pb_save1()
 {
-    Q_EMIT SIG_jumpWidget(4);
+    //Q_EMIT SIG_jumpWidget(4);
+    CGameSystem::DuSave(1);
     CGameSystem::Make_The_Scene(CGameSystem::Checkpoint);
+    Q_EMIT SIG_jumpWidget(4);
 };
+
 
 //选择存档2
 void GameChoice2::slot_pb_save2()
 {
-    //Q_EMIT SIG_save_02();
+    Q_EMIT SIG_jumpWidget(4);
+    //CGameSystem::DuSave(1);
     CGameSystem::Make_The_Scene(CGameSystem::Checkpoint);
 };
 
 //选择存档3
 void GameChoice2::slot_pb_save3()
 {
+    Q_EMIT SIG_jumpWidget(4);
+    //CGameSystem::DuSave(1);
     CGameSystem::Make_The_Scene(CGameSystem::Checkpoint);
 }
 

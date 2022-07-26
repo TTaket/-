@@ -1,5 +1,6 @@
 #include "gamechoice2item.h"
 #include "ui_gamechoice2item.h"
+#include <QDebug>
 
 GameChoice2Item::GameChoice2Item(QWidget *parent) :
     QWidget(parent),
@@ -48,17 +49,21 @@ void GameChoice2Item::on_pb_gameChoiceItem_2_clicked()
 {
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
     QString btnName = btn->text();
+    qDebug()<<btnName;
 
-    if(!strcmp(btnName.toStdString().c_str(), "存档1"))
+    if(btnName.contains("存档1", Qt::CaseSensitive))
     {
+        qDebug()<<"选择存档1";
         Q_EMIT SIG_pb_save1();
     }
-    else if(!strcmp(btnName.toStdString().c_str(), "存档2"))
+    else if(btnName.contains("存档2", Qt::CaseSensitive))
     {
+        qDebug()<<"选择存档2";
         Q_EMIT SIG_pb_save2();
     }
-    else if(!strcmp(btnName.toStdString().c_str(), "存档3"))
+    else if(btnName.contains("存档3", Qt::CaseSensitive))
     {
+        qDebug()<<"选择存档3";
         Q_EMIT SIG_pb_save3();
     }
     else if(!strcmp(btnName.toStdString().c_str(), "返回上一页"))

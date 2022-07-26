@@ -26,19 +26,21 @@ Game::Game(QWidget *parent) :
                      this,
                      SLOT(dealJumpWidget(int)));
 
-    //游戏选项界面
+    //游戏选项界面1
     m_gameChoice = new GameChoice;
     QObject::connect(m_gameChoice,
                      SIGNAL(SIG_jumpWidget(int)),
                      this,
                      SLOT(dealJumpWidget(int)));
 
+    //游戏选项界面2
     m_gameChoice2 = new GameChoice2;
     QObject::connect(m_gameChoice2,
                      SIGNAL(SIG_jumpWidget(int)),
                      this,
                      SLOT(dealJumpWidget(int)));
 
+    //游戏地图界面
     m_gameMap = new GameMap;
     QObject::connect(m_gameMap,
                      SIGNAL(SIG_jumpWidget(int)),

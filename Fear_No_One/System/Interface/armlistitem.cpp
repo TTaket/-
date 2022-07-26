@@ -6,21 +6,26 @@ ArmListItem::ArmListItem(QWidget *parent) :
     ui(new Ui::ArmListItem)
 {
     ui->setupUi(this);
-
+    pArm =nullptr;
 
 }
 
 ArmListItem::~ArmListItem()
 {
+    pArm =nullptr;
     delete ui;
 }
 //设置选项信息
-void ArmListItem::setInfo(QString name, int iconId, int value)
+void ArmListItem::setInfo()//改为直接由指针 调用
 {
-    ui->lb_armName->setText(name);
-    ui->lb_armIcon->setText(QString::number(iconId,10));
+    if(!pArm){
+        qDebug()<<"<ArmListItem::setInfo() err";
+        return;
+    }
+    ui->lb_armName->setText(QString::fromStdString(pArm->m_name));
+    ui->lb_armIcon->setText(QString::number(pArm->m_Id,10));//Iconid != id;
     ui->lb_armFinger->setText("");
-    ui->lb_armValue->setText(QString::number(value,10));
+    ui->lb_armValue->setText(QString::number(pArm->m_Lastusetime,10));
 }
 
 //获取武器名字

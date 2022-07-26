@@ -21,6 +21,8 @@ int CGameSystem::Sys_Window_width;
 int CGameSystem::using_peoid =0;
 int CGameSystem::Mouse_X =0;//当前鼠标X坐标
 int CGameSystem::Mouse_Y =0;//当前鼠标y坐标
+CArm* CGameSystem::using_arm = nullptr;
+
 void CGameSystem::InitGame(){//初始化
 	//地图部分
     Sys_Window_Height = 600;
@@ -64,8 +66,8 @@ void CGameSystem::OverGame(){
 
 
 
-void CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){
-	CArm *CArm2 = CGameSystem::Character_Info[y1-1]->m_Zhuangbei;
+void CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方武器， 敌方
+    CArm *CArm2 = CGameSystem::Character_Info[y1-1]->m_Zhuangbei;//土匪
 	//影响因素：
 	//攻击方人物 ： 力量 、 技巧 、熟练度 、 速度、 幸运；
 	//攻击方武器 ： 攻击力 、 命中； 
@@ -800,9 +802,16 @@ std::list<int> CGameSystem::Action(int id){
 	std::list<int>ans;
 	//攻击
 	std::list<CArm*> ATKable = CGameSystem::Character_Info[id-1]->Able_UsedtoATK();
-	if(!ATKable.empty()){
-		ans.push_back(_DEF_Action_ATK);
-	}
+    bool ispeoatk = 0;
+    for(auto it = ATKable.begin();it!=ATKable.end();it++){
+        std::list<int>peoidlist = (*it)->Able_UsedtoATKPeoid(id,(*it));
+        if(!peoidlist.empty()){
+            ispeoatk = 1;
+        }
+    }
+    if(ispeoatk){
+        ans.push_back(_DEF_Action_ATK);
+    }
     //治疗
 	std::list<CArm*> Treatable = CGameSystem::Character_Info[id-1]->Able_UsedtoTreat();
 	if(!Treatable.empty()){
@@ -1039,4 +1048,9 @@ std::list<int> CGameSystem::Able_UsedtoExchange(int id){
 
 void CGameSystem::change_using_peoid(int x){
     using_peoid = x;
+}
+
+void CGameSystem::change_using_arm(CArm* Armnow)
+{
+    using_arm = Armnow;
 }

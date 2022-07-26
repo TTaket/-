@@ -1,6 +1,6 @@
 #ifndef ARMLISTITEM_H
 #define ARMLISTITEM_H
-
+#include<CGameSystem.h>
 #include <QWidget>
 
 namespace Ui {
@@ -16,10 +16,10 @@ public:
     ~ArmListItem();
 
     //设置选项信息
-    void setInfo(QString name, int iconId, int value);
+    void setInfo();
     //获取武器名字信息
     QString getArmName();
-
+    CArm* pArm;
     //手指是否显示
     void setFingerShow(bool enable);
 

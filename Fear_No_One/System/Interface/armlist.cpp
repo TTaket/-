@@ -7,6 +7,7 @@ ArmList::ArmList(QWidget *parent) :
     ui(new Ui::ArmList)
 {
     ui->setupUi(this);
+
     ui->background->setPixmap(QPixmap("../Fear_No_One/Resource/Photo/armlist.png"));
     ui->lw_armList->setStyleSheet("background-color:transparent");
 }
@@ -103,16 +104,15 @@ void ArmList::createList()
 //单击选择
 void ArmList::on_lw_armList_itemClicked(QListWidgetItem *item)
 {
-    QString armName;
+    CArm * ArmNow = nullptr;
 
     //在vector中找到这个item
-    qDebug()<<m_armListItemVector.size();
     for(int i=0;i<m_armListItemVector.size();i++)
     {
         if(item == m_qListWidgetVector[i])
         {
             m_armListItemVector[i]->setFingerShow(true);
-            armName = m_armListItemVector[i]->getArmName();
+            ArmNow = m_armListItemVector[i]->pArm;
         }
         else
         {
@@ -122,16 +122,22 @@ void ArmList::on_lw_armList_itemClicked(QListWidgetItem *item)
 
     updateList();
 
-    Q_EMIT SIG_armInfoShow(armName);
+    Q_EMIT SIG_armInfoShow(ArmNow);
 }
 
 //双击选择
 void ArmList::on_lw_armList_itemDoubleClicked(QListWidgetItem *item)
 {
-    //在武器列表双击选择武器后，如果前一个动作是"物品",则显示“装备，交换，舍去”三个选项
-    Q_EMIT SIG_armChoice();
+    CArm * ArmNow = nullptr;
+    //在vector中找到这个item
+    for(int i=0;i<m_armListItemVector.size();i++)
+    {
+        if(item == m_qListWidgetVector[i])
+        {
+            ArmNow = m_armListItemVector[i]->pArm;
+        }
+    }
+    qDebug()<<"选择的武器："<< QString::fromStdString(ArmNow->m_name );
 
-    //但是如果前一个动作是"攻击", 则选择武器后，要显示攻击界面。
-
-    //如何在“同一个武器列表双击事件中”区分前一个动作并执行下一个动作？？？
+    Q_EMIT SIG_armChoice(ArmNow);
 }
