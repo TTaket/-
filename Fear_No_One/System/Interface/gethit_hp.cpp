@@ -1,7 +1,7 @@
 #include "gethit_hp.h"
 #include "ui_gethit_hp.h"
 
-#include<QPainter>
+
 gethit_hp::gethit_hp(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::gethit_hp)
@@ -12,6 +12,9 @@ gethit_hp::gethit_hp(QWidget *parent) :
 
     QTimer *CurrentTime = new QTimer(this);
     CurrentTime->start(1000);
+    tinfo = new Tool_Info;
+    m_gethit_exp = new gethit_exp;
+
 
 
 }
@@ -19,6 +22,18 @@ gethit_hp::gethit_hp(QWidget *parent) :
 gethit_hp::~gethit_hp()
 {
     delete ui;
+    if(m_gethit_exp){
+        delete m_gethit_exp;
+        m_gethit_exp = nullptr;
+    }
+    if(tinfo){
+        delete tinfo;
+        tinfo = nullptr;
+    }
+    if(finfo){
+        delete finfo;
+        finfo = nullptr;
+    }
 }
 
 
@@ -29,6 +44,7 @@ void gethit_hp::setInfo(Fightinfo* Finfo){
     Arm1 = CGameSystem::using_arm;
     Arm2 = CGameSystem::Character_Info[redid-1]->m_Zhuangbei;
     ground_id = Finfo->Groundid;
+
 }
 
 void gethit_hp::Init_ui(){
@@ -165,13 +181,24 @@ void gethit_hp::st_Fight(){
     ui->te_fightinfo->append(QString("战斗结束"));
     QCoreApplication::processEvents();
     ui->te_fightinfo->update();
-    Sleep(2000);//稍暂停
+    Sleep(1500);//稍暂停
     if(finfo->is_die){
         CGameSystem::Character_Info[finfo->id2-1]->m_Islive = 0;//设为死亡;
     }
 
     GameMap::m_gethithpEnable = 0;
+    if(finfo->Add_Money>0){
+        tinfo->showinfo(QString("你获得了%1 个金币").arg(finfo->Add_Money*500));
+    }
+    if(finfo->Add_shouliandu>0){
+        tinfo->showinfo(QString("您的熟练度提升"));
+    }
+    //(int id ,int level1 , int Exp1 ,int addExp);
+
+    m_gethit_exp->show_ui(finfo->id1,finfo->Base_level,finfo->Base_Exp,finfo->Add_Exp);
 }
+
+
 void gethit_hp::slot_Fightinfo(Fightinfo* Finfo){
     GameMap::m_gethithpEnable = 0;
     setInfo(Finfo);

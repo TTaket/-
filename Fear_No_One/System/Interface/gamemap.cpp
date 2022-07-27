@@ -11,7 +11,6 @@ bool GameMap::m_armInfoEnable             =0;
 bool GameMap::m_tufeiListEnable           =0;
 bool GameMap::m_attackReadyInfoEnable     =0;
 bool GameMap::m_changePeopleListEnable    =0;
-bool GameMap::m_gethitexpEnable           =0;
 bool GameMap::m_gethithpEnable            =0;
 bool GameMap::m_echangePeopleListEnable   =0;
 bool GameMap::m_echangeArmListEnable      =0;
@@ -27,7 +26,9 @@ GameMap::GameMap(QWidget *parent) :
     m_attackReadyInfo(NULL),
     m_echangePeopleList(NULL),
     m_echangeArmList1(NULL),
-    m_echangeArmList2(NULL)
+    m_echangeArmList2(NULL),
+    timer(nullptr),
+    TimeId(0)
 {
     ui->setupUi(this);
     setFocusPolicy(Qt::StrongFocus);
@@ -77,12 +78,7 @@ GameMap::GameMap(QWidget *parent) :
                      SLOT(slot_Fightinfo(Fightinfo*)));
 
 
-    m_gethitexp = new gethit_exp(this);
-//  m_changePeopleList = new ChangePeopleList(this); //yuan
-//    QObject::connect(m_changePeopleList,
-//                     SIGNAL(SIG_changePeopleArmShow(int,int)),
-//                     this,
-//                     SLOT(slot_changePeopleArmShow(int,int)));
+
     m_echangePeopleList = new EchangePeopleList(this);
     QObject::connect(m_echangePeopleList,
                      SIGNAL(SIG_changePeopleArmShow(int,int)),
@@ -99,6 +95,17 @@ GameMap::GameMap(QWidget *parent) :
                      this,
                      SLOT(slot_changePeopleArmShow(int,int)));
 
+    timer = new QTimer(this);
+    QObject::connect(timer,
+                     SIGNAL(timeout()),
+                     this,
+                     SLOT(slot_timeadd()));
+    timer->start(250);//开始运行
+
+    QObject::connect(m_echangeArmList2,
+                     SIGNAL(SIG_changePeopleArmShow(int,int)),
+                     this,
+                     SLOT(slot_changePeopleArmShow(int,int)));
 
     //控件处理
     m_peopleHpInfo->setGeometry(700,0,200,80);
@@ -127,11 +134,6 @@ GameMap::GameMap(QWidget *parent) :
     m_gethithpEnable = false;
     m_gethithp->setGeometry(50,200,800,200);
 
-    m_gethitexp->hide();
-    m_gethitexpEnable = false;
-    m_gethitexp->setGeometry(250,200,400,200);
-
-
 
     m_echangePeopleList->hide();
     m_echangePeopleListEnable = false;
@@ -145,6 +147,8 @@ GameMap::GameMap(QWidget *parent) :
 
     //鼠标捕获
     setMouseTracking(true);
+    //开启时间片
+
 }
 
 GameMap::~GameMap()
@@ -190,11 +194,6 @@ GameMap::~GameMap()
         delete m_gethithp;
         m_gethithp = NULL;
     }
-    if(m_gethitexp)
-    {
-        delete m_gethitexp;
-        m_gethitexp = NULL;
-    }
 
     if(m_echangePeopleList)
     {
@@ -214,6 +213,11 @@ GameMap::~GameMap()
 
 }
 
+//时间片运行
+void GameMap::slot_timeadd(){
+    TimeId++;
+    updateMap();
+}
 //更新地图
 void GameMap::updateMap()
 {
@@ -269,7 +273,7 @@ void GameMap::drawPixmap(QPainter *painter){
 
     //显示控件peopleHpInfo 和 GroundTypeInfo
     if(!m_actionListEnable && !m_armListEnable && !m_armInfoEnable
-            && !m_tufeiListEnable && !m_attackReadyInfoEnable && !m_gethithpEnable && !m_gethitexpEnable
+            && !m_tufeiListEnable && !m_attackReadyInfoEnable && !m_gethithpEnable
             && !m_echangePeopleListEnable && !m_echangeArmListEnable
             && !key_controlAble){//在进行别的操作的时候不弹出这个画面
         m_groundTypeInfo->ground_id  = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[Mouse_pos_relativelyX][Mouse_pos_relativelyY];
@@ -340,7 +344,7 @@ void GameMap::drawPixmap(QPainter *painter){
             for(j=1;j<=groundMap->m_MapYmax;j++)
             {
                   if(groundMap->m_Peopleid[i][j] !=0 && CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_Islive){
-                      image.load(CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_MappicPos[0][0]);
+                      image.load(CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_MappicPos[CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_Map_ZhuangTai][TimeId%3]);
                       scaled_width = this->width()/groundMap->m_MapXmax;
                       scaled_height = this->height()/groundMap->m_MapYmax;
                       image = image.mirrored(true, true);
@@ -407,11 +411,6 @@ void GameMap::drawPixmap(QPainter *painter){
     }else{
         m_gethithp->hide();
     }
-    if(GameMap::m_gethitexpEnable){//行动链表 -> 选择完武器 ->土匪选择链表 -> 战斗信息链表 -> 战斗过程 -> 经验
-        m_gethitexp->show();
-    }else{
-        m_gethitexp->hide();
-    }
 
 //    if(GameMap::m_changePeopleListEnable){//行动链表 -> 交换的人物选择??
 //        m_changePeopleList->show();
@@ -463,7 +462,7 @@ void GameMap::mouseMoveEvent(QMouseEvent *event)
 void GameMap::mousePressEvent(QMouseEvent *event){
     //根据鼠标位置获得相对坐标
     if(!m_actionListEnable && !m_armListEnable && !m_armInfoEnable
-            && !m_tufeiListEnable && !m_attackReadyInfoEnable && !m_gethithpEnable && !m_gethitexpEnable
+            && !m_tufeiListEnable && !m_attackReadyInfoEnable && !m_gethithpEnable
             && !m_echangePeopleListEnable && !m_echangeArmListEnable
             && !key_controlAble){
         int Mouse_pos_relativelyX = CGameSystem::Mouse_X/60+1;
@@ -477,6 +476,7 @@ void GameMap::mousePressEvent(QMouseEvent *event){
             return;
         }
         CGameSystem::change_using_peoid(tmppeople_id); //获取当前选定的角色id
+
         //获取颜色
         std::list<MoveInfo*> up_color = CGameSystem::Able_UsedtoMove(tmppeople_id);
         qDebug()<< QString::fromStdString(CGameSystem::Character_Info[tmppeople_id-1]->m_name);
@@ -516,6 +516,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
         switch(op){
                    case Qt::Key_W:
                     qDebug("The key you Pressed is : ↑ \n");
+                    CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_Map_ZhuangTai = 1;
                     CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = 0;
                     if(CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY <CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapYmax && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY+1] == _DEF_COLOR_GROUND_BLUE)
                         CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY++;
@@ -524,6 +525,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                     break;
                  case Qt::Key_S:
                     qDebug("The key you Pressed is : ↓ \n");
+                    CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_Map_ZhuangTai = 2;
                     CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = 0;
                     if(CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY >0 && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY-1] == _DEF_COLOR_GROUND_BLUE)
                         CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY--;
@@ -532,6 +534,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                     break;
                  case Qt::Key_A:
                     qDebug("The key you Pressed is : ← \n");
+                    CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_Map_ZhuangTai = 3;
                     CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = 0;
                     if(CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX >0  && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX-1][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] == _DEF_COLOR_GROUND_BLUE)
                         CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX--;
@@ -540,6 +543,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                     break;
                  case Qt::Key_D:
                     qDebug("The key you Pressed is : → \n");
+                    CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_Map_ZhuangTai = 4;
                     CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = 0;
                     if(CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX <CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapXmax && CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX+1][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] == _DEF_COLOR_GROUND_BLUE)
                         CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX++;
@@ -549,6 +553,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                  //case Qt::Key_Enter:{//数字键盘回车键
                    case Qt::Key_Return:{//字母键盘回车键
                     qDebug("The key you Pressed is : Enter \n");
+                    CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_Map_ZhuangTai = 0;
                     //TODO: 调用行动函数;
                     //清除色层
                     memset(CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color , 0 , sizeof CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color);
@@ -563,6 +568,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                 case Qt::Key_Escape://esc
                    qDebug("The key you Pressed is : ESC \n");
                    if(CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX != Xreset || CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY != Yreset){//非原点esc 就是 回到原点
+                       CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_Map_ZhuangTai = 5;
                        CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = 0;
                        CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX = Xreset;
                        CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY = Yreset;
@@ -570,10 +576,10 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                        updateMap();
                    }else{//在原点esc 就是 退出控制
                        //清除色层
+                       CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_Map_ZhuangTai = 0;
                        memset(CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color , 0 , sizeof CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Color);
                        updateMap();
                        Xreset = 0,Yreset = 0;//清空移动重设;
-                       CGameSystem::change_using_peoid(0);
                        this->setAttribute(Qt::WA_TransparentForMouseEvents, false);//回复鼠标;
                        key_controlAble = 0;//结束控制
                    }

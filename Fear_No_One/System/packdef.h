@@ -49,6 +49,7 @@ struct Fightinfo{
         is_boji2      =0;
         is_miss2      =0;
         Base_Exp      =0;
+        Base_level    =0;
         Add_Exp       =0;
         Add_Money     =0;
         Add_shouliandu=0;
@@ -72,6 +73,7 @@ struct Fightinfo{
     bool is_miss2;
 
     int  Base_Exp;
+    int  Base_level;
     int  Add_Exp;
 
     int  Add_Money;
@@ -179,8 +181,8 @@ struct Fightinfo{
 		m_Attributes.Shuliandu_fu = dengji/2+1;\
         m_Attributes.Shuliandu_zhang = 0;\
         m_iconPos ="../Fear_No_One/Resource/Character/Head/head-tufei.png";\
-        m_MappicPos[0][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/12.png";\
-        m_MappicPos[0][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/15.png";\
+        m_MappicPos[0][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/15.png";\
+        m_MappicPos[0][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/12.png";\
         m_MappicPos[0][2] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/17.png";\
         m_MappicPos[5][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/41.png";\
         m_MappicPos[5][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/44.png";\

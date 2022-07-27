@@ -2,6 +2,7 @@
 
 Character::Character(int id):m_Islive(1),m_NowX(0),m_NowY(0),m_Ismove(0){
 	m_Id = id;
+    m_Map_ZhuangTai = 0;
 	m_name.clear();
 	m_Zhuangbei = nullptr;
 	Armslist.clear();
@@ -53,9 +54,47 @@ void Character::upgrade(int Add_Exp){
 			return;
 		}else{
 			m_Attributes.m_Level++;
-			//加点界面
+            //升级奖励！
+            srand(0);
+            int val=0;
+            val = rand()%11+1;
+            if(val>=7){
+                m_Attributes.Sudu++;
+            }else if (val > 10){
+                m_Attributes.Sudu+=2;
+            }
+            val = rand()%11+1;
+            if(val>=5){
+                m_Attributes.Hujia++;
+            }else if (val > 10){
+                m_Attributes.Hujia+=2;
+            }
+            val = rand()%11+1;
+            if(val>=5){
+                m_Attributes.Gongjili++;
+            }else if (val > 10){
+                m_Attributes.Gongjili+=2;
+            }
+            val = rand()%11+1;
+            if(val>=8){
+                m_Attributes.Jiqiao++;
+            }else if (val > 10){
+                m_Attributes.Jiqiao+=2;
+            }
+            val = rand()%11+1;
+            if(val>=10){
+                m_Attributes.Xingyun++;
+            }
+            val = rand()%11+1;
+            if(val>=5){
+                m_Attributes.m_HpMax+=2;
+            }else if (val >= 9){
+                m_Attributes.m_HpMax+=4;
+            }
 		}
-	}
+    }else{
+        m_Attributes.m_Exp += Add_Exp;
+    }
 };
 void Character::upshuliandu (int WuqiZhonglei){
 	switch (WuqiZhonglei)

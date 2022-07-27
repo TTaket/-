@@ -13,7 +13,7 @@
 #include "actionlist.h"
 #include "armlist.h"
 #include "actionlistitem.h"
-#include "ArmListitem.h"
+#include "armlistitem.h"
 #include "arminfo.h"
 #include "attackreadyinfo.h"
 #include "packdef.h"
@@ -30,6 +30,7 @@
 
 class AttackReadyInfo;
 class gethit_hp;
+class gethit_exp;
 class ArmInfo;
 class ArmList;
 
@@ -69,6 +70,8 @@ private slots:
 
     //双方角色可交换的武器信息显示槽函数
     void slot_changePeopleArmShow(int peoid1, int peoid2);
+    //时间推进
+    void slot_timeadd();
 
 private:
     Ui::GameMap *ui;
@@ -85,7 +88,6 @@ private:
     AttackReadyInfo* m_attackReadyInfo;
 
     gethit_hp* m_gethithp;
-    gethit_exp* m_gethitexp;
 
 
     EchangePeopleList* m_echangePeopleList;
@@ -101,7 +103,6 @@ public:
     static bool m_tufeiListEnable;
     static bool m_attackReadyInfoEnable;
     static bool m_changePeopleListEnable;
-    static bool m_gethitexpEnable;
     static bool m_gethithpEnable;
     static bool m_echangePeopleListEnable;
     static bool m_echangeArmListEnable;
@@ -116,12 +117,20 @@ public:
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
 
+
 //键盘和移动相关
 public:
     void keyPressEvent(QKeyEvent *event);
     bool key_controlAble;
     int Xreset;
     int Yreset;
+
+//时间相关
+public:
+    int TimeId;
+    QTimer* timer;
+
 };
+
 
 #endif // GAMEMAP_H

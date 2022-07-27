@@ -45,6 +45,7 @@ SOURCES += \
     System/Interface/mybuttongamechoice.cpp \
     System/Interface/mybuttongamestart.cpp \
     System/Interface/peoplehpinfo.cpp \
+    System/Interface/tool_info.cpp \
     System/main.cpp \
     System/Interface/actionlistitem.cpp \
     System/Interface/actionlist.cpp \
@@ -77,6 +78,7 @@ HEADERS += \
     System/Interface/mybuttongamechoice.h \
     System/Interface/mybuttongamestart.h \
     System/Interface/peoplehpinfo.h \
+    System/Interface/tool_info.h \
     System/packdef.h \
     System/Interface/actionlistitem.h \
     System/Interface/actionlist.h \
@@ -110,5 +112,6 @@ FORMS += \
     System/Interface/gamechoiceitem.ui \
     System/Interface/gamechoice2item.ui \
     System/Interface/attackreadyinfo.ui \
+    System/Interface/tool_info.ui \
     System/Interface/tufeilistitem.ui \
     System/Interface/tufeilist.ui

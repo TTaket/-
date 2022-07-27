@@ -93,6 +93,7 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 	CArm1->Is_Nowzhuangbei = 1;
     finfo->id1 = x1;
     finfo->id2 = y1;
+    finfo->Base_level = CGameSystem::Character_Info[x1-1]->m_Attributes.m_Level;
     finfo->hp1_now = CGameSystem::Character_Info[x1-1]->m_Attributes.m_HpNow;
     finfo->hp2_now = CGameSystem::Character_Info[y1-1]->m_Attributes.m_HpNow;
     finfo->hp1_max = CGameSystem::Character_Info[x1-1]->m_Attributes.m_HpMax;
@@ -206,9 +207,11 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 	int	Add_Exp = 0;
 	bool Add_shouliandu = 0;
 	bool Add_Money = 0;
+    int roundval = 0;
 	CArm1->m_Lastusetime -=ATKtime;
     for(int i=1;i<=ATKtime;i++){
-        if(rand()%99+1 <=Baoji){
+        roundval =rand()%100+1;
+        if( roundval<=Baoji){
 			//信号暴击动作 伤害值
             if(i == 1){
                 finfo->is_boji1 = 1;
@@ -232,8 +235,9 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 				break;
 			}
 		}else{
-            if(rand()%99+1 <= Mingzhong){
-			Add_Exp += 30;
+            roundval =rand()%100+1;
+            if(roundval <= Mingzhong){
+                Add_Exp += 30;
                 finfo->Add_Exp = finfo->Add_Exp+30;
                 if(i == 1){
                     finfo->Hit1 = (int)(Hit);
@@ -819,6 +823,7 @@ void CGameSystem::RedWork(){
                         CGameSystem::GetHit((*it)->m_Id , (*it)->m_Zhuangbei , aim);
                     }
                 }
+
             RedWork_AIMovetoPeo((*it)->m_Id);//自动移动;
             int aim = 0;
             if(aim = RedWork_AIATKPeo((*it)->m_Id,1)){//如果有可以打到的人 攻击；
@@ -1099,6 +1104,10 @@ std::list<int> CGameSystem::Able_UsedtoExchange(int id){
 };
 
 void CGameSystem::change_using_peoid(int x){
+    if(using_peoid!=0){
+        CGameSystem::Character_Info[using_peoid-1]->m_Map_ZhuangTai = 0;//取消原本状态
+    }
+    CGameSystem::Character_Info[x -1 ]->m_Map_ZhuangTai = 5;//设置为选中态
     using_peoid = x;
 }
 
