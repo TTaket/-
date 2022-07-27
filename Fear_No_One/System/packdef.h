@@ -39,6 +39,24 @@
     #define _DEF_AIMove_Fangxiang_up     4
     #define _DEF_AIMove_Fangxiang_down   5
 
+//8.战斗信息
+struct Fightinfo{
+    int ATKtime;
+    int Hit1;
+    bool is_boji1;
+    bool is_miss1;
+
+    int Hit2;
+    bool is_boji2;
+    bool is_miss2;
+
+    int Base_Exp;
+    int Add_Exp;
+
+    int Add_Money;
+    int Add_shouliandu;
+
+};
 
 /*支线剧情1要塞 全员生命值10点*/
 /*支线剧情2要塞 全员生命值10点*/

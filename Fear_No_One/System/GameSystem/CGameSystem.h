@@ -29,7 +29,7 @@ public:
     static void Make_The_Scene(int sceneid);//游戏后端场景的布置 - 胜利条件的确定
     static void The_Hero_Dies();//主人公死亡
 
-    static void GetHit(int RenwuId1 , CArm * CArm1 ,int RenwuId2);//底层 - 攻击的伤害的落实与死亡判定和奖励
+    static Fightinfo* GetHit(int RenwuId1 , CArm * CArm1 ,int RenwuId2);//底层 - 攻击的伤害的落实与死亡判定和奖励
     static void Thing_Fun(int RenwuId,CArm * CArm1);//底层 - 物品的使用
     static void GetTreat(int RenwuId1 , CArm * CArm1 ,int RenwuId2);//底层 - 治疗的落实
     static void Side_story(int funid);//底层 - 地图引发的支线激活
@@ -88,4 +88,6 @@ public:
     static int Mouse_Y;//当前鼠标y坐标
     static void change_using_peoid(int x);
     static void change_using_arm(CArm* Armnow);//李晶洋： 虽然我觉得这里可以删掉
+
+
 };

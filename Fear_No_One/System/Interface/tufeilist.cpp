@@ -127,8 +127,8 @@ void TuFeiList::on_lw_tufeiList_itemDoubleClicked(QListWidgetItem *item)
             //取出土匪id
             int tufeiId = m_TufeiListItemVector[i]->getTufeiId();
             qDebug()<<QString("选择了土匪%1号").arg(tufeiId);
-            //根据土匪id获取人物信息
-            Character *character = CGameSystem::Character_Info[tufeiId-1];
+//            //根据土匪id获取人物信息
+//            Character *character = CGameSystem::Character_Info[tufeiId-1];
             //发送信号给gamemap，战斗前显示双方信息
             Q_EMIT SIG_attackReadyInfoShow(CGameSystem::using_peoid,CGameSystem::using_arm,tufeiId);
         }

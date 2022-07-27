@@ -36,6 +36,8 @@ SOURCES += \
     System/Interface/gamechoice2.cpp \
     System/Interface/gamemap.cpp \
     System/Interface/gamestart.cpp \
+    System/Interface/gethit_exp.cpp \
+    System/Interface/gethit_hp.cpp \
     System/Interface/groundtypeinfo.cpp \
     System/Interface/mybuttongamechoice.cpp \
     System/Interface/mybuttongamestart.cpp \
@@ -51,7 +53,8 @@ SOURCES += \
     System/Interface/attackreadyinfo.cpp \
     System/Interface/tufeilistitem.cpp \
     System/Interface/tufeilist.cpp \
-    System/Interface/changepeoplelist.cpp
+    System/Interface/changepeoplelist.cpp \
+    System/Interface/changepeoplelistitem.cpp
 
 HEADERS += \
     Data/Arms/Arms.h \
@@ -64,6 +67,8 @@ HEADERS += \
     System/Interface/gamechoice2.h \
     System/Interface/gamemap.h \
     System/Interface/gamestart.h \
+    System/Interface/gethit_exp.h \
+    System/Interface/gethit_hp.h \
     System/Interface/groundtypeinfo.h \
     System/Interface/mybuttongamechoice.h \
     System/Interface/mybuttongamestart.h \
@@ -79,7 +84,8 @@ HEADERS += \
     System/Interface/attackreadyinfo.h \
     System/Interface/tufeilistitem.h \
     System/Interface/tufeilist.h \
-    System/Interface/changepeoplelist.h
+    System/Interface/changepeoplelist.h \
+    System/Interface/changepeoplelistitem.h
 
 FORMS += \
     System/Interface/game.ui \
@@ -87,6 +93,8 @@ FORMS += \
     System/Interface/gamechoice2.ui \
     System/Interface/gamemap.ui \
     System/Interface/gamestart.ui \
+    System/Interface/gethit_exp.ui \
+    System/Interface/gethit_hp.ui \
     System/Interface/groundtypeinfo.ui \
     System/Interface/peoplehpinfo.ui \
     System/Interface/actionlistitem.ui \
@@ -99,4 +107,5 @@ FORMS += \
     System/Interface/attackreadyinfo.ui \
     System/Interface/tufeilistitem.ui \
     System/Interface/tufeilist.ui \
-    System/Interface/changepeoplelist.ui
+    System/Interface/changepeoplelist.ui \
+    System/Interface/changepeoplelistitem.ui

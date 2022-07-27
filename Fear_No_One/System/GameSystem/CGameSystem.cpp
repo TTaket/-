@@ -66,7 +66,8 @@ void CGameSystem::OverGame(){
 
 
 
-void CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方武器， 敌方
+Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方武器， 敌方
+    Fightinfo* finfo = new Fightinfo;
     CArm *CArm2 = CGameSystem::Character_Info[y1-1]->m_Zhuangbei;//土匪
 	//影响因素：
 	//攻击方人物 ： 力量 、 技巧 、熟练度 、 速度、 幸运；
@@ -188,6 +189,7 @@ void CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方武器
 	}else{
 		ATKtime = 1;
 	}
+    finfo->ATKtime = ATKtime;
 	int Hit = CGameSystem::Character_Info[x1-1]->m_Attributes.Gongjili*CArm1->m_ATK/20 *shouliandu_jiacheng/100 -  CGameSystem::Character_Info[y1-1]->m_Attributes.Hujia;
 	int Baoji = CGameSystem::Character_Info[x1-1]->m_Attributes.Xingyun + CGameSystem::Character_Info[x1-1]->m_Attributes.Jiqiao +10;
 	int Mingzhong = CArm1->m_Mingzhong + CGameSystem::Character_Info[x1-1]->m_Attributes.Xingyun - CGameSystem::Character_Info[y1-1]->m_Attributes.Xingyun - CArm2->m_Shanbi;
@@ -195,21 +197,33 @@ void CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方武器
 	bool Add_shouliandu = 0;
 	bool Add_Money = 0;
 	CArm1->m_Lastusetime -=ATKtime;
-	while(ATKtime--){
+    for(int i=1;i<=ATKtime;i++){
 		if(rand()%99+1 >=Baoji){
 			//信号暴击动作 伤害值
+            if(i == 1){
+                finfo->is_boji1 = 1;
+                finfo->Hit1 = (int)(Hit*1.5);
+            }else{
+                finfo->is_boji2 = 1;
+                finfo->Hit2 = (int)(Hit*1.5);
+
+            }
+            finfo->Add_Exp =finfo->Add_Exp +45;
 			Add_Exp += 45;
 			if(!CGameSystem::Character_Info[x1-1]->LostHp((int)(Hit*1.5))){//如果死亡 武器熟练度标记为1 跳出；
 				if(y1 == 1){
-					CGameSystem::The_Hero_Dies();
+                    CGameSystem::The_Hero_Dies();//主角死亡;
 				}
 				Add_shouliandu = 1;
 				Add_Money = 1;
+                finfo->Add_shouliandu = 1;
+                finfo->Add_Money = 1;
 				break;
 			}
 		}else{
 			if(rand()%99+1 >=Mingzhong){
 			Add_Exp += 30;
+                finfo->Add_Exp = finfo->Add_Exp+30;
 			//信号普通动作 伤害值
 				if(!CGameSystem::Character_Info[x1-1]->LostHp(Hit)){//如果死亡 武器熟练度标记为1 跳出；
 					if(y1 == 1){
@@ -217,18 +231,27 @@ void CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方武器
 					}
 					Add_shouliandu = 1;
 					Add_Money = 1;
+                    finfo->Add_shouliandu = 1;
+                    finfo->Add_Money = 1;
 					break;
 				}
 			}else{
 			//信号普通动作 miss
-			Add_Exp += 15;
+                if(i == 1){
+                    finfo->is_miss1 = 1;
+                }else{
+                    finfo->is_miss2 = 1;
+                }
+                finfo->Add_Exp = finfo->Add_Exp+15;
+                Add_Exp += 15;
 			}
 		}
 	}
 	if(CGameSystem::Character_Info[x1-1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei){//土匪没有加成
-		return;
+        return nullptr;
 	}
 	//经验值加成；
+    finfo->Base_Exp = CGameSystem::Character_Info[x1-1]->m_Attributes.m_Exp;
 	CGameSystem::Character_Info[x1-1]->upgrade(Add_Exp);//不可能连上两级
 	//熟练度加成；
 	if(Add_shouliandu){

@@ -18,6 +18,8 @@
 #include "CGameSystem.h"
 #include "tufeilist.h"
 #include "tufeilistitem.h"
+#include "changepeoplelist.h"
+#include "changepeoplelistitem.h"
 
 namespace Ui {
 class GameMap;
@@ -41,7 +43,6 @@ signals:
     void SIG_jumpWidget(int id);
 
 private slots:
-    void on_pb_test_clicked();
     //更新列表信号槽函数
     void slot_updateList();
     //行动处理信号槽函数
@@ -52,6 +53,8 @@ private slots:
     void slot_armChoice(CArm* Armnow);
     //玩家选择要攻击的土匪后，战斗前，显示双方信息
     void slot_attackReadyInfoShow(int blueId,CArm*Armnow, int redId);
+    //双方角色可交换的武器信息显示槽函数
+    void slot_changePeopleArmShow(int peoid1, int peoid2);
 
 private:
     Ui::GameMap *ui;
@@ -67,6 +70,8 @@ private:
 
     AttackReadyInfo* m_attackReadyInfo;
 
+    ChangePeopleList* m_changePeopleList;
+
 public:
     //这些用来标记控件是否显示，在按下ESC按键时需要用到
     bool m_actionListEnable;
@@ -74,6 +79,7 @@ public:
     bool m_armInfoEnable;
     bool m_tufeiListEnable;
     bool m_attackReadyInfoEnable;
+    bool m_changePeopleListEnable;
 
 //绘制地图
 public:

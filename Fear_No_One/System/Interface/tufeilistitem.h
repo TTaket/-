@@ -25,7 +25,6 @@ public:
     void setFingerShow(bool enable);
 private:
     Ui::TufeiListItem *ui;
-    //这属性仅仅是用于方便从ui中获取角色信息
     int m_id; //保存土匪id
 };
 
