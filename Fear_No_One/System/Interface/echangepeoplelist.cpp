@@ -1,9 +1,9 @@
-#include "changepeoplelist.h"
-#include "ui_changepeoplelist.h"
+#include "echangepeoplelist.h"
+#include "ui_echangepeoplelist.h"
 
-ChangePeopleList::ChangePeopleList(QWidget *parent) :
+EchangePeopleList::EchangePeopleList(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ChangePeopleList)
+    ui(new Ui::EchangePeopleList)
 {
     ui->setupUi(this);
 
@@ -20,18 +20,18 @@ ChangePeopleList::ChangePeopleList(QWidget *parent) :
     ui->lw_changePeopleList->setStyleSheet("background-color:transparent");
 }
 
-ChangePeopleList::~ChangePeopleList()
+EchangePeopleList::~EchangePeopleList()
 {
     delete ui;
 }
 
 //添加列表项
-void ChangePeopleList::addItem(ChangePeopleListItem* item)
+void EchangePeopleList::addItem(EchangePeopleListItem* item)
 {
     m_ChangePeopleListItemVector.push_back(item);
 }
 
-void ChangePeopleList::deleteItemList()
+void EchangePeopleList::deleteItemList()
 {
     for(int i=0;i<m_ChangePeopleListItemVector.size();i++)
     {
@@ -46,7 +46,7 @@ void ChangePeopleList::deleteItemList()
 }
 
 //更新列表
-void ChangePeopleList::updateList()
+void EchangePeopleList::updateList()
 {
     ui->lw_changePeopleList->hide();
 
@@ -60,7 +60,7 @@ void ChangePeopleList::updateList()
     ui->lw_changePeopleList->show();
 }
 
-void ChangePeopleList::createList()
+void EchangePeopleList::createList()
 {
     //清空表项
     int n = ui->lw_changePeopleList->count();
@@ -94,7 +94,7 @@ void ChangePeopleList::createList()
 }
 
 //单击事件
-void ChangePeopleList::on_lw_changePeopleList_itemClicked(QListWidgetItem *item)
+void EchangePeopleList::on_lw_changePeopleList_itemClicked(QListWidgetItem *item)
 {
     //在vector中找到这个item
     for(int i=0;i<m_ChangePeopleListItemVector.size();i++)
@@ -113,7 +113,7 @@ void ChangePeopleList::on_lw_changePeopleList_itemClicked(QListWidgetItem *item)
 }
 
 //双击事件
-void ChangePeopleList::on_lw_changePeopleList_itemDoubleClicked(QListWidgetItem *item)
+void EchangePeopleList::on_lw_changePeopleList_itemDoubleClicked(QListWidgetItem *item)
 {
     //玩家选择要交换武器的友方后
     //1.1在vector中找到这个item
@@ -124,9 +124,10 @@ void ChangePeopleList::on_lw_changePeopleList_itemDoubleClicked(QListWidgetItem 
             //取出友方id
             int blueId = m_ChangePeopleListItemVector[i]->getBlueId();
             qDebug()<<QString("选择了友方%1号").arg(blueId);
-//            //根据友方id获取人物信息
-//            Character *character = CGameSystem::Character_Info[blueId-1];
-            //发送信号给gamemap，战斗前显示双方信息
+
+            CGameSystem::change_exchange_peoids(CGameSystem::using_peoid, blueId);
+
+            //发送信号给gamemap，显示双方可以交换的武器
             Q_EMIT SIG_changePeopleArmShow(CGameSystem::using_peoid, blueId);
         }
     }

@@ -1,23 +1,23 @@
-#ifndef CHANGEPEOPLELIST_H
-#define CHANGEPEOPLELIST_H
+#ifndef ECHANGEPEOPLELIST_H
+#define ECHANGEPEOPLELIST_H
 
 #include <QWidget>
 #include <QListWidgetItem>
-#include "changepeoplelistitem.h"
+#include "echangepeoplelistitem.h"
 
 namespace Ui {
-class ChangePeopleList;
+class EchangePeopleList;
 }
 
-class ChangePeopleList : public QWidget
+class EchangePeopleList : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ChangePeopleList(QWidget *parent = 0);
-    ~ChangePeopleList();
+    explicit EchangePeopleList(QWidget *parent = 0);
+    ~EchangePeopleList();
 
-    void addItem(ChangePeopleListItem* item);
+    void addItem(EchangePeopleListItem* item);
     void deleteItemList();
     void updateList();
     void createList();
@@ -32,10 +32,10 @@ signals:
     void SIG_changePeopleArmShow(int peoid1, int peoid2);
 
 private:
-    Ui::ChangePeopleList *ui;
+    Ui::EchangePeopleList *ui;
 
     std::vector<QListWidgetItem*> m_qListWidgetVector;
-    std::vector<ChangePeopleListItem*> m_ChangePeopleListItemVector;
+    std::vector<EchangePeopleListItem*> m_ChangePeopleListItemVector;
 };
 
-#endif // CHANGEPEOPLELIST_H
+#endif // ECHANGEPEOPLELIST_H

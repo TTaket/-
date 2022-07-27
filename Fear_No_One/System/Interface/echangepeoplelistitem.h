@@ -1,20 +1,20 @@
-#ifndef CHANGEPEOPLELISTITEM_H
-#define CHANGEPEOPLELISTITEM_H
+#ifndef ECHANGEPEOPLELISTITEM_H
+#define ECHANGEPEOPLELISTITEM_H
 
 #include <QWidget>
 #include "Character.h"
 
 namespace Ui {
-class ChangePeopleListItem;
+class EchangePeopleListItem;
 }
 
-class ChangePeopleListItem : public QWidget
+class EchangePeopleListItem : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ChangePeopleListItem(QWidget *parent = 0);
-    ~ChangePeopleListItem();
+    explicit EchangePeopleListItem(QWidget *parent = 0);
+    ~EchangePeopleListItem();
 
     //设置选项信息
     void setInfo(int id);
@@ -24,7 +24,7 @@ public:
     //手指是否显示
     void setFingerShow(bool enable);
 private:
-    Ui::ChangePeopleListItem *ui;
+    Ui::EchangePeopleListItem *ui;
     int m_id; //保存友方id
 };
 

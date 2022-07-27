@@ -1,9 +1,9 @@
-#include "changepeoplelistitem.h"
-#include "ui_changepeoplelistitem.h"
+#include "echangepeoplelistitem.h"
+#include "ui_echangepeoplelistitem.h"
 
-ChangePeopleListItem::ChangePeopleListItem(QWidget *parent) :
+EchangePeopleListItem::EchangePeopleListItem(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ChangePeopleListItem)
+    ui(new Ui::EchangePeopleListItem)
 {
     ui->setupUi(this);
     ui->lb_blueFinger->setAlignment(Qt::AlignCenter);
@@ -11,13 +11,13 @@ ChangePeopleListItem::ChangePeopleListItem(QWidget *parent) :
                                       .scaled(ui->lb_blueBackGround->width(), ui->lb_blueBackGround->height()));
 }
 
-ChangePeopleListItem::~ChangePeopleListItem()
+EchangePeopleListItem::~EchangePeopleListItem()
 {
     delete ui;
 }
 
 
-void ChangePeopleListItem::setInfo(int id)
+void EchangePeopleListItem::setInfo(int id)
 {
     //根据友方id获取友方信息
     m_id = id;
@@ -40,12 +40,12 @@ void ChangePeopleListItem::setInfo(int id)
     ui->lb_blueIcon->setPixmap(pixmap);
 }
 
-int ChangePeopleListItem::getBlueId()
+int EchangePeopleListItem::getBlueId()
 {
     return m_id;
 }
 
-void ChangePeopleListItem::setFingerShow(bool enable)
+void EchangePeopleListItem::setFingerShow(bool enable)
 {
     if(enable)
     {
