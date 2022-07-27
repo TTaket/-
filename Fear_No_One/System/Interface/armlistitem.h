@@ -23,6 +23,7 @@ public:
     //手指是否显示
     void setFingerShow(bool enable);
 
+    int m_peoid; //武器所属人id，在交换武器时需要用到
 private:
     Ui::ArmListItem *ui;
 };

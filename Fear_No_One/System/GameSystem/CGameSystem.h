@@ -84,10 +84,13 @@ public:
     //游戏运行过程中的
     static int using_peoid;//当前选中的人物
     static CArm* using_arm; //当前选中的人物所选择的武器
+    static int exchangePeoid1; //用于保存交换武器的两个人物id
+    static int exchangePeoid2;
     static int Mouse_X;//当前鼠标X坐标
     static int Mouse_Y;//当前鼠标y坐标
     static void change_using_peoid(int x);
-    static void change_using_arm(CArm* Armnow);//李晶洋： 虽然我觉得这里可以删掉
+    static void change_using_arm(CArm* Armnow);
+    static void change_exchange_peoids(int peoid1, int peoid2);
 
 
 };

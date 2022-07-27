@@ -50,9 +50,9 @@ void AttackReadyInfo::setInfo(int blueId,CArm* Armnow, int redId)
 //            blueArm = *ite;
 //        }
 //    }
-    CArm* blueArm = Armnow;
+    blueArm = Armnow;
     //红方
-    CArm* redArm = redCharacter->m_Zhuangbei;
+    redArm = redCharacter->m_Zhuangbei;
 
     //设置双方装备信息
     //蓝方
@@ -77,4 +77,13 @@ void AttackReadyInfo::on_lb_startZhandou_clicked()
     //跳转到战斗界面
     qDebug()<<QString("红方id：%1").arg(m_redId);
     qDebug()<<QString("蓝方id：%1").arg(m_blueId);
+    Fightinfo* finfo = CGameSystem::GetHit(m_blueId,blueArm,m_redId);
+    //关闭其他控件
+
+    GameMap::m_actionListEnable = 0;
+    GameMap::m_armListEnable = 0;
+    GameMap::m_armInfoEnable = 0;
+    GameMap::m_tufeiListEnable = 0;
+    GameMap::m_attackReadyInfoEnable = 0;
+    Q_EMIT SIG_Fightinfo(finfo);
 }

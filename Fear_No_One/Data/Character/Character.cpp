@@ -111,10 +111,9 @@ bool Character::LostHp (int num){
 		return 1;
 	}
 	if(m_Attributes.m_HpNow <= num){
-		m_Attributes.m_HpNow -= num;
+        m_Attributes.m_HpNow = 0;
 		return 0;
 	}
-	m_Islive  = 0;
 	//死亡对话;
 	return 0;
 }

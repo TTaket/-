@@ -6,6 +6,8 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QList>
+#include <QTimer>
+#include <QThread>
 #include "peoplehpinfo.h"
 #include "groundtypeinfo.h"
 #include "actionlist.h"
@@ -18,8 +20,18 @@
 #include "CGameSystem.h"
 #include "tufeilist.h"
 #include "tufeilistitem.h"
-#include "changepeoplelist.h"
-#include "changepeoplelistitem.h"
+#include "gethit_exp.h"
+#include "gethit_hp.h"
+#include "echangepeoplelist.h"
+#include "echangepeoplelistitem.h"
+#include "echangearmlist.h"
+
+
+
+class AttackReadyInfo;
+class gethit_hp;
+class ArmInfo;
+class ArmList;
 
 namespace Ui {
 class GameMap;
@@ -42,6 +54,7 @@ public:
 signals:
     void SIG_jumpWidget(int id);
 
+
 private slots:
     //更新列表信号槽函数
     void slot_updateList();
@@ -53,6 +66,7 @@ private slots:
     void slot_armChoice(CArm* Armnow);
     //玩家选择要攻击的土匪后，战斗前，显示双方信息
     void slot_attackReadyInfoShow(int blueId,CArm*Armnow, int redId);
+
     //双方角色可交换的武器信息显示槽函数
     void slot_changePeopleArmShow(int peoid1, int peoid2);
 
@@ -70,16 +84,27 @@ private:
 
     AttackReadyInfo* m_attackReadyInfo;
 
-    ChangePeopleList* m_changePeopleList;
+    gethit_hp* m_gethithp;
+    gethit_exp* m_gethitexp;
+
+
+    EchangePeopleList* m_echangePeopleList;
+
+    EchangeArmList* m_echangeArmList1;
+    EchangeArmList* m_echangeArmList2;
 
 public:
     //这些用来标记控件是否显示，在按下ESC按键时需要用到
-    bool m_actionListEnable;
-    bool m_armListEnable;
-    bool m_armInfoEnable;
-    bool m_tufeiListEnable;
-    bool m_attackReadyInfoEnable;
-    bool m_changePeopleListEnable;
+    static bool m_actionListEnable;
+    static bool m_armListEnable;
+    static bool m_armInfoEnable;
+    static bool m_tufeiListEnable;
+    static bool m_attackReadyInfoEnable;
+    static bool m_changePeopleListEnable;
+    static bool m_gethitexpEnable;
+    static bool m_gethithpEnable;
+    static bool m_echangePeopleListEnable;
+    static bool m_echangeArmListEnable;
 
 //绘制地图
 public:

@@ -2,9 +2,8 @@
 #define ATTACKREADYINFO_H
 
 #include <QWidget>
-#include "Arms.h"
-#include "Character.h"
 #include "CGameSystem.h"
+#include "gamemap.h"
 
 namespace Ui {
 class AttackReadyInfo;
@@ -20,6 +19,8 @@ public:
 
     void setInfo(int blueId,CArm* Armnow, int redId);
 
+signals:
+    void SIG_Fightinfo(Fightinfo*);
 private slots:
     void on_lb_startZhandou_clicked();
 
@@ -28,6 +29,9 @@ private:
 
     int m_blueId; //记录将要战斗的蓝方角色id
     int m_redId; //记录将要战斗的红方角色id
+    CArm* blueArm;
+    CArm* redArm ;
+
 };
 
 #endif // ATTACKREADYINFO_H

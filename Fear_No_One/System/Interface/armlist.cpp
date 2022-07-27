@@ -138,6 +138,6 @@ void ArmList::on_lw_armList_itemDoubleClicked(QListWidgetItem *item)
         }
     }
     qDebug()<<"选择的武器："<< QString::fromStdString(ArmNow->m_name );
-
+    GameMap::m_armInfoEnable = false;
     Q_EMIT SIG_armChoice(ArmNow);
 }

@@ -21,7 +21,10 @@ int CGameSystem::Sys_Window_width;
 int CGameSystem::using_peoid =0;
 int CGameSystem::Mouse_X =0;//当前鼠标X坐标
 int CGameSystem::Mouse_Y =0;//当前鼠标y坐标
+
 CArm* CGameSystem::using_arm = nullptr;
+int CGameSystem::exchangePeoid1 =0; //用于保存交换武器的两个人物id
+int CGameSystem::exchangePeoid2 =0;
 
 void CGameSystem::InitGame(){//初始化
 	//地图部分
@@ -88,6 +91,13 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 	CGameSystem::Character_Info[x1-1]->m_Zhuangbei->Is_Nowzhuangbei = 0;
 	CGameSystem::Character_Info[x1-1]->m_Zhuangbei = CArm1;
 	CArm1->Is_Nowzhuangbei = 1;
+    finfo->id1 = x1;
+    finfo->id2 = y1;
+    finfo->hp1_now = CGameSystem::Character_Info[x1-1]->m_Attributes.m_HpNow;
+    finfo->hp2_now = CGameSystem::Character_Info[y1-1]->m_Attributes.m_HpNow;
+    finfo->hp1_max = CGameSystem::Character_Info[x1-1]->m_Attributes.m_HpMax;
+    finfo->hp2_max = CGameSystem::Character_Info[y1-1]->m_Attributes.m_HpMax;
+    finfo->Groundid = CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[CGameSystem::Character_Info[x1-1]->m_NowX][CGameSystem::Character_Info[x1-1]->m_NowY];
 
 	switch(CArm1->m_WuqiZhonglei){
 		case _DEF_CArm_Jian:
@@ -198,7 +208,7 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 	bool Add_Money = 0;
 	CArm1->m_Lastusetime -=ATKtime;
     for(int i=1;i<=ATKtime;i++){
-		if(rand()%99+1 >=Baoji){
+        if(rand()%99+1 <=Baoji){
 			//信号暴击动作 伤害值
             if(i == 1){
                 finfo->is_boji1 = 1;
@@ -210,10 +220,11 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
             }
             finfo->Add_Exp =finfo->Add_Exp +45;
 			Add_Exp += 45;
-			if(!CGameSystem::Character_Info[x1-1]->LostHp((int)(Hit*1.5))){//如果死亡 武器熟练度标记为1 跳出；
+            if(!CGameSystem::Character_Info[y1-1]->LostHp((int)(Hit*1.5))){//如果死亡 武器熟练度标记为1 跳出；
 				if(y1 == 1){
                     CGameSystem::The_Hero_Dies();//主角死亡;
 				}
+                finfo->is_die = 1;
 				Add_shouliandu = 1;
 				Add_Money = 1;
                 finfo->Add_shouliandu = 1;
@@ -221,14 +232,21 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 				break;
 			}
 		}else{
-			if(rand()%99+1 >=Mingzhong){
+            if(rand()%99+1 <= Mingzhong){
 			Add_Exp += 30;
                 finfo->Add_Exp = finfo->Add_Exp+30;
+                if(i == 1){
+                    finfo->Hit1 = (int)(Hit);
+                }else{
+                    finfo->Hit2 = (int)(Hit);
+
+                }
 			//信号普通动作 伤害值
-				if(!CGameSystem::Character_Info[x1-1]->LostHp(Hit)){//如果死亡 武器熟练度标记为1 跳出；
+                if(!CGameSystem::Character_Info[y1-1]->LostHp(Hit)){//如果死亡 武器熟练度标记为1 跳出；
 					if(y1 == 1){
 						CGameSystem::The_Hero_Dies();
 					}
+                    finfo->is_die = 1;
 					Add_shouliandu = 1;
 					Add_Money = 1;
                     finfo->Add_shouliandu = 1;
@@ -260,6 +278,8 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 	if(Add_Money){
 		CGameSystem::Money+=500;
 	}
+
+    return finfo;
 };
 
 void CGameSystem::GetTreat(int x1 , CArm *CArm1 ,int y1){
@@ -901,7 +921,7 @@ std::list<MoveInfo*> CGameSystem::Able_UsedtoMove(int id){
         }
         //左
         if(xnow-1>0 && !visMap[xnow-1][ynow]){
-            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow-1][ynow]-1]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow-1][ynow]!=0){
+            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow-1][ynow]-1]->m_ablewalk)||(CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow-1][ynow]!=0 && CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow-1][ynow]-1]->m_Islive)){
                 MoveInfo *pos = new MoveInfo{xnow-1 ,ynow, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                 ans.push_back(pos);
                 visMap[xnow-1][ynow] = _DEF_COLOR_GROUND_RED;
@@ -918,7 +938,7 @@ std::list<MoveInfo*> CGameSystem::Able_UsedtoMove(int id){
         }
         //下
         if(ynow-1>0&& !visMap[xnow][ynow-1]){
-            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow-1]-1]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow][ynow-1]!=0){
+            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow-1]-1]->m_ablewalk)||(CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow][ynow-1]!=0&& CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow][ynow-1]-1]->m_Islive)){
                 MoveInfo *pos = new MoveInfo{xnow ,ynow-1, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                 ans.push_back(pos);
                 visMap[xnow][ynow-1] = _DEF_COLOR_GROUND_RED;
@@ -935,7 +955,7 @@ std::list<MoveInfo*> CGameSystem::Able_UsedtoMove(int id){
         }
         //右
         if(xnow+1<=Maxmapx&& !visMap[xnow+1][ynow]){
-            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow+1][ynow]-1]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow+1][ynow]!=0){
+            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow+1][ynow]-1]->m_ablewalk)||(CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow+1][ynow]!=0&& CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow+1][ynow]-1]->m_Islive)){
                 MoveInfo *pos = new MoveInfo{xnow+1 ,ynow, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                 ans.push_back(pos);
                 visMap[xnow+1][ynow] = _DEF_COLOR_GROUND_RED;
@@ -952,7 +972,7 @@ std::list<MoveInfo*> CGameSystem::Able_UsedtoMove(int id){
         }
         //上
         if(ynow+1<=Maxmapy&& !visMap[xnow][ynow+1]){
-            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow+1]-1]->m_ablewalk)||CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow][ynow+1]!=0){
+            if(!(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Groundid[xnow][ynow+1]-1]->m_ablewalk)||(CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow][ynow+1]!=0&& CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[Checkpoint-1]->m_Peopleid[xnow][ynow+1]-1]->m_Islive)){
                 MoveInfo *pos = new MoveInfo{xnow ,ynow+1, _DEF_COLOR_GROUND_RED,0x3f3f3f3f};
                 ans.push_back(pos);
                 visMap[xnow][ynow+1] = _DEF_COLOR_GROUND_RED;
@@ -1018,7 +1038,7 @@ std::list<MoveInfo*> CGameSystem::Able_UsedtoMove(int id){
 void CGameSystem::Arm_exchange(int peoid,CArm* CArm,int aimid){
     CGameSystem::Character_Info[aimid-1]->Armslist.push_back(CArm);
     for(auto it = CGameSystem::Character_Info[peoid-1]->Armslist.begin();it!=CGameSystem::Character_Info[peoid-1]->Armslist.end();it++){
-        if(&(*it) == &CArm){
+        if((*it) == CArm){
             CGameSystem::Character_Info[aimid-1]->Armslist.erase(it);
             break;
         }
@@ -1045,25 +1065,34 @@ std::list<int> CGameSystem::Able_UsedtoExchange(int id){
     if(xnow-1 >0){
         int peoid = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow-1][ynow];
         if(peoid != 0 && CGameSystem::Character_Info[peoid-1]->m_Attributes.m_Job != _DEF_Character_Job_TuFei){
-            ans.push_back(peoid);
+            if(CGameSystem::Character_Info[peoid-1]->m_Islive){
+                ans.push_back(peoid);
+            }
         }
     }
     if(ynow-1 >0){
         int peoid = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow][ynow-1];
         if(peoid != 0 && CGameSystem::Character_Info[peoid-1]->m_Attributes.m_Job != _DEF_Character_Job_TuFei){
-            ans.push_back(peoid);
+            if(CGameSystem::Character_Info[peoid-1]->m_Islive){
+                ans.push_back(peoid);
+            }
         }
     }
     if(xnow+1 <= CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapXmax){
         int peoid = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow+1][ynow];
         if(peoid != 0 && CGameSystem::Character_Info[peoid-1]->m_Attributes.m_Job != _DEF_Character_Job_TuFei){
-            ans.push_back(peoid);
+            if(CGameSystem::Character_Info[peoid-1]->m_Islive){
+                ans.push_back(peoid);
+            }
         }
     }
     if(ynow+1 <= CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapYmax){
         int peoid = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow][ynow+1];
         if(peoid != 0 && CGameSystem::Character_Info[peoid-1]->m_Attributes.m_Job != _DEF_Character_Job_TuFei){
-            ans.push_back(peoid);
+            if(CGameSystem::Character_Info[peoid-1]->m_Islive){
+                ans.push_back(peoid);
+            }
+
         }
     }
     return ans;
@@ -1076,4 +1105,9 @@ void CGameSystem::change_using_peoid(int x){
 void CGameSystem::change_using_arm(CArm* Armnow)
 {
     using_arm = Armnow;
+}
+void CGameSystem::change_exchange_peoids(int peoid1, int peoid2)
+{
+    exchangePeoid1 = peoid1;
+    exchangePeoid2 = peoid2;
 }

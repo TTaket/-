@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QListWidgetItem>
 #include "ArmListitem.h"
+#include "gamemap.h"
 
 namespace Ui {
 class ArmList;

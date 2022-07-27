@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "Arms.h"
+#include "gamemap.h"
 
 namespace Ui {
 class ArmInfo;

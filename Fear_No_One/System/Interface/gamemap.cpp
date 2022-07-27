@@ -5,6 +5,16 @@
 #include "Map.h"
 #include <QDebug>
 
+bool GameMap::m_actionListEnable          =0;
+bool GameMap::m_armListEnable             =0;
+bool GameMap::m_armInfoEnable             =0;
+bool GameMap::m_tufeiListEnable           =0;
+bool GameMap::m_attackReadyInfoEnable     =0;
+bool GameMap::m_changePeopleListEnable    =0;
+bool GameMap::m_gethitexpEnable           =0;
+bool GameMap::m_gethithpEnable            =0;
+bool GameMap::m_echangePeopleListEnable   =0;
+bool GameMap::m_echangeArmListEnable      =0;
 GameMap::GameMap(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GameMap),
@@ -13,9 +23,11 @@ GameMap::GameMap(QWidget *parent) :
     m_actionList(NULL),
     m_armList(NULL),
     m_armInfo(NULL),
-    m_attackReadyInfo(NULL),
     m_tufeiList(NULL),
-    m_changePeopleList(NULL)
+    m_attackReadyInfo(NULL),
+    m_echangePeopleList(NULL),
+    m_echangeArmList1(NULL),
+    m_echangeArmList2(NULL)
 {
     ui->setupUi(this);
     setFocusPolicy(Qt::StrongFocus);
@@ -57,12 +69,36 @@ GameMap::GameMap(QWidget *parent) :
                      SLOT(slot_attackReadyInfoShow(int,CArm*,int)));
 
     m_attackReadyInfo = new AttackReadyInfo(this);
+    m_gethithp = new gethit_hp(this);
 
-    m_changePeopleList = new ChangePeopleList(this);
-    QObject::connect(m_changePeopleList,
+    QObject::connect(m_attackReadyInfo,
+                     SIGNAL(SIG_Fightinfo(Fightinfo*)),
+                     m_gethithp,
+                     SLOT(slot_Fightinfo(Fightinfo*)));
+
+
+    m_gethitexp = new gethit_exp(this);
+//  m_changePeopleList = new ChangePeopleList(this); //yuan
+//    QObject::connect(m_changePeopleList,
+//                     SIGNAL(SIG_changePeopleArmShow(int,int)),
+//                     this,
+//                     SLOT(slot_changePeopleArmShow(int,int)));
+    m_echangePeopleList = new EchangePeopleList(this);
+    QObject::connect(m_echangePeopleList,
                      SIGNAL(SIG_changePeopleArmShow(int,int)),
                      this,
                      SLOT(slot_changePeopleArmShow(int,int)));
+    m_echangeArmList1 = new EchangeArmList(this);
+    QObject::connect(m_echangeArmList1,
+                     SIGNAL(SIG_changePeopleArmShow(int,int)),
+                     this,
+                     SLOT(slot_changePeopleArmShow(int,int)));
+    m_echangeArmList2 = new EchangeArmList(this);
+    QObject::connect(m_echangeArmList2,
+                     SIGNAL(SIG_changePeopleArmShow(int,int)),
+                     this,
+                     SLOT(slot_changePeopleArmShow(int,int)));
+
 
     //控件处理
     m_peopleHpInfo->setGeometry(700,0,200,80);
@@ -78,7 +114,7 @@ GameMap::GameMap(QWidget *parent) :
 
     m_armInfo->hide();
     m_armInfoEnable = false;
-    m_armInfo->setGeometry(350,240,280,270);
+    m_armInfo->setGeometry(620,320,280,270);
 
     m_attackReadyInfo->hide();
     m_attackReadyInfoEnable = false;
@@ -87,9 +123,25 @@ GameMap::GameMap(QWidget *parent) :
     m_tufeiListEnable = false;
     m_tufeiList->setGeometry(630,0,270,400);
 
-    m_changePeopleList->hide();
-    m_changePeopleListEnable = false;
-    m_changePeopleList->setGeometry(630,0,270,400);
+    m_gethithp->hide();
+    m_gethithpEnable = false;
+    m_gethithp->setGeometry(50,200,800,200);
+
+    m_gethitexp->hide();
+    m_gethitexpEnable = false;
+    m_gethitexp->setGeometry(250,200,400,200);
+
+
+
+    m_echangePeopleList->hide();
+    m_echangePeopleListEnable = false;
+    m_echangePeopleList->setGeometry(630,0,270,400);
+
+    m_echangeArmList1->hide();
+    m_echangeArmList2->hide();
+    m_echangeArmListEnable = false;
+    m_echangeArmList1->setGeometry(0,0,m_echangeArmList1->width(), m_echangeArmList1->height());
+    m_echangeArmList2->setGeometry(580,0,m_echangeArmList2->width(), m_echangeArmList2->height());
 
     //鼠标捕获
     setMouseTracking(true);
@@ -133,10 +185,31 @@ GameMap::~GameMap()
         delete m_tufeiList;
         m_tufeiList = NULL;
     }
-    if(m_changePeopleList)
+    if(m_gethithp)
     {
-        delete m_changePeopleList;
-        m_changePeopleList = NULL;
+        delete m_gethithp;
+        m_gethithp = NULL;
+    }
+    if(m_gethitexp)
+    {
+        delete m_gethitexp;
+        m_gethitexp = NULL;
+    }
+
+    if(m_echangePeopleList)
+    {
+        delete m_echangePeopleList;
+        m_echangePeopleList = NULL;
+    }
+    if(m_echangeArmList1)
+    {
+        delete m_echangeArmList1;
+        m_echangeArmList1 = NULL;
+    }
+    if(m_echangeArmList2)
+    {
+        delete m_echangeArmList2;
+        m_echangeArmList2 = NULL;
     }
 
 }
@@ -183,7 +256,7 @@ void GameMap::drawPixmap(QPainter *painter){
     int Mouse_pos_relativelyY = (CGameSystem::Sys_Window_Height - CGameSystem::Mouse_Y)/60+1;
 
 
-    //显示控件peopleHpInfo 和 GroundTypeInfo
+
     int tmppeople_id  = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[Mouse_pos_relativelyX][Mouse_pos_relativelyY];
 
     if(tmppeople_id == 0){
@@ -193,12 +266,15 @@ void GameMap::drawPixmap(QPainter *painter){
     }
 
 
-    m_groundTypeInfo->ground_id  = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[Mouse_pos_relativelyX][Mouse_pos_relativelyY];
-    m_peopleHpInfo->setInfo();//更新数据
-    m_groundTypeInfo->setInfo();//更新数据
+
+    //显示控件peopleHpInfo 和 GroundTypeInfo
     if(!m_actionListEnable && !m_armListEnable && !m_armInfoEnable
-            && !m_tufeiListEnable && !m_attackReadyInfoEnable
+            && !m_tufeiListEnable && !m_attackReadyInfoEnable && !m_gethithpEnable && !m_gethitexpEnable
+            && !m_echangePeopleListEnable && !m_echangeArmListEnable
             && !key_controlAble){//在进行别的操作的时候不弹出这个画面
+        m_groundTypeInfo->ground_id  = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[Mouse_pos_relativelyX][Mouse_pos_relativelyY];
+        m_peopleHpInfo->setInfo();//更新数据
+        m_groundTypeInfo->setInfo();//更新数据
         if(CGameSystem::Mouse_X >= CGameSystem::Sys_Window_width/2){
                 m_peopleHpInfo->move(0,0);
                 if(m_peopleHpInfo->people_id>0){
@@ -298,17 +374,76 @@ void GameMap::drawPixmap(QPainter *painter){
         }
     }
 
+
+    //ui控件的统一控制
+    if(GameMap::m_actionListEnable){//行动链表
+        m_actionList->show();
+    }else{
+        m_actionList->hide();
+    }
+    if(GameMap::m_armListEnable){//行动链表 -> 攻击的武器链表
+        m_armList->show();
+    }else{
+        m_armList->hide();
+    }
+    if(GameMap::m_armInfoEnable){//行动链表 -> 攻击的人物头像
+        if(!m_tufeiListEnable)//可以写内置逻辑
+            m_armInfo->show();
+    }else{
+        m_armInfo->hide();
+    }
+    if(GameMap::m_tufeiListEnable){//行动链表 -> 选择完武器 ->土匪选择链表
+        m_tufeiList->show();
+    }else{
+        m_tufeiList->hide();
+    }
+    if(GameMap::m_attackReadyInfoEnable){//行动链表 -> 选择完武器 ->土匪选择链表 -> 战斗信息链表
+        m_attackReadyInfo->show();
+    }else{
+        m_attackReadyInfo->hide();
+    }
+    if(GameMap::m_gethithpEnable){//行动链表 -> 选择完武器 ->土匪选择链表 -> 战斗信息链表 -> 战斗过程
+        m_gethithp->show();
+    }else{
+        m_gethithp->hide();
+    }
+    if(GameMap::m_gethitexpEnable){//行动链表 -> 选择完武器 ->土匪选择链表 -> 战斗信息链表 -> 战斗过程 -> 经验
+        m_gethitexp->show();
+    }else{
+        m_gethitexp->hide();
+    }
+
+//    if(GameMap::m_changePeopleListEnable){//行动链表 -> 交换的人物选择??
+//        m_changePeopleList->show();
+//    }else{
+//        m_changePeopleList->hide();
+//    }
+    if(GameMap::m_echangePeopleListEnable){//行动链表  -> 交换的人物选择??
+        m_echangePeopleList->show();
+    }else{
+        m_echangePeopleList->hide();
+    }
+    if(GameMap::m_echangeArmListEnable){//行动链表 -> 交换的人物选择??
+        m_echangeArmList1->show();
+        m_echangeArmList2->show();
+    }else{
+        m_echangeArmList1->hide();
+        m_echangeArmList2->hide();
+    }
+//    if(GameMap::m_actionListEnable){//行动链表
+//        m_actionList->show();
+//    }else{
+//        m_actionList->hide();
+//    }
+
+
     painter->restore();
 };
-//-----------------金光闪闪得李晶洋工作区域 ！！！！----------------------
-//---------------------
-//---------------------
-//---------------------1.重写鼠标移动 不断刷新 地皮信息和人物信息（左右双位置）
-//---------------------2.重写点击事件 获取人物id 获取点击位置的可移动链表
-//---------------------3.绘制链表
-//---------------------4.不断移动并且更新后台数据
-//---------------------5.调出功能链表
-//---------------------6.
+
+
+
+
+
 
 
 //鼠标捕获
@@ -328,8 +463,8 @@ void GameMap::mouseMoveEvent(QMouseEvent *event)
 void GameMap::mousePressEvent(QMouseEvent *event){
     //根据鼠标位置获得相对坐标
     if(!m_actionListEnable && !m_armListEnable && !m_armInfoEnable
-            && !m_tufeiListEnable && !m_attackReadyInfoEnable
-            && !m_changePeopleListEnable
+            && !m_tufeiListEnable && !m_attackReadyInfoEnable && !m_gethithpEnable && !m_gethitexpEnable
+            && !m_echangePeopleListEnable && !m_echangeArmListEnable
             && !key_controlAble){
         int Mouse_pos_relativelyX = CGameSystem::Mouse_X/60+1;
         int Mouse_pos_relativelyY = (CGameSystem::Sys_Window_Height - CGameSystem::Mouse_Y)/60+1;
@@ -375,7 +510,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
     */
     if(!m_actionListEnable && !m_armListEnable && !m_armInfoEnable
             && !m_tufeiListEnable && !m_attackReadyInfoEnable
-            && !m_changePeopleListEnable
+            && !m_echangePeopleListEnable && !m_echangeArmListEnable
             && key_controlAble)
     {
         switch(op){
@@ -462,37 +597,32 @@ void GameMap::keyPressEvent(QKeyEvent *event){
             //控件显示和隐藏控制
             if(m_attackReadyInfoEnable)
             {
-                m_attackReadyInfo->hide();
                 m_attackReadyInfoEnable = false;
             }
             else
             {
                 if(m_tufeiListEnable)
                 {
-                    m_tufeiList->hide();
                     m_tufeiListEnable = false;
                 }
                 else
                 {
                     if(m_armListEnable)
                     {
-                        m_armList->hide();
                         m_armListEnable = false;
-                        m_armInfo->hide();
                         m_armInfoEnable = false;
-                        m_actionList->show();
                         m_actionListEnable = true;
                     }
                     else
                     {
                         if(m_actionListEnable)
                         {
-                            m_actionList->hide();
                             m_actionListEnable = false;
                         }
                     }
                 }
             }
+            updateMap();
         }
      }
 }
@@ -503,18 +633,14 @@ void GameMap::keyPressEvent(QKeyEvent *event){
 //-------------------------------------------------------------------
 void GameMap::actionListShow()
 {
-    m_actionList->hide();
     m_actionListEnable = false;
-    m_armList->hide();
     m_armListEnable = false;
-    m_armInfo->hide();
     m_armInfoEnable = false;
-    m_attackReadyInfo->hide();
     m_attackReadyInfoEnable = false;
-    m_tufeiList->hide();
     m_tufeiListEnable = false;
-    m_changePeopleList->hide();
     m_changePeopleListEnable = false;
+    m_echangeArmListEnable = false;
+    m_echangePeopleListEnable = false;
 
     m_actionList->deleteItemList();
 
@@ -552,7 +678,6 @@ void GameMap::actionListShow()
     }
 
     m_actionList->createList();
-    m_actionList->show();
     m_actionListEnable = true;
 
 }
@@ -569,9 +694,7 @@ void GameMap::slot_action(QString actionName)
     if(!strcmp(actionName.toStdString().c_str(), "攻击"))
     {
         //隐藏行动列表
-        m_actionList->hide();
         m_actionListEnable = false;
-        m_armList->hide();
         m_armListEnable = false;
 
         m_armList->deleteItemList();
@@ -592,7 +715,6 @@ void GameMap::slot_action(QString actionName)
         }
         //2.显示
         m_armList->createList();
-        m_armList->show();
         m_armListEnable = true;
     }
     else if(!strcmp(actionName.toStdString().c_str(), "治疗"))
@@ -602,9 +724,7 @@ void GameMap::slot_action(QString actionName)
     else if(!strcmp(actionName.toStdString().c_str(), "物品"))
     {
         //隐藏行动列表
-        m_actionList->hide();
         m_actionListEnable = false;
-        m_armList->hide();
         m_armListEnable = false;
 
         m_armList->deleteItemList();
@@ -625,7 +745,6 @@ void GameMap::slot_action(QString actionName)
         }
         //2.显示
         m_armList->createList();
-        m_armList->show();
         m_armListEnable = true;
     }
     else if(!strcmp(actionName.toStdString().c_str(), "交互"))
@@ -634,34 +753,23 @@ void GameMap::slot_action(QString actionName)
     }
     else if(!strcmp(actionName.toStdString().c_str(), "交换"))
     {
-        //1.获取可以与当前角色交换武器的人物id列表,这是个模板，和获取可攻击的土匪列表一样
-//        int id = CGameSystem::using_peoid;
-//        std::list<int> UsedtoATKPeoid = Armnow->Able_UsedtoATKPeoid(id, Armnow);
-//        m_tufeiList->deleteItemList();
-//        //将可攻击范围内的敌方信息显示出来，供玩家选择
-//        for(auto ite = UsedtoATKPeoid.begin(); ite != UsedtoATKPeoid.end(); ite++)
-//        {
-//            //获取tufei的id
-//            int tufeiId = *ite;
-//            //根据tufei的id设置相关信息
-//            TufeiListItem* tufeiItem = new TufeiListItem;
-//            tufeiItem->setInfo(tufeiId);
-//            m_tufeiList->addItem(tufeiItem);
-//        }
+        //1.获取可以与当前角色交换武器的人物id列表
+        int id = CGameSystem::using_peoid;
+        std::list<int> UsedtoExchange = CGameSystem::Able_UsedtoExchange(id);
+        m_echangePeopleList->deleteItemList();
+        //将可交换的友军信息显示出来，供玩家选择
+        for(auto ite = UsedtoExchange.begin(); ite != UsedtoExchange.end(); ite++)
+        {
+            //获取友方的id
+            int blueId = *ite;
+            //根据友方的id设置相关信息
+            EchangePeopleListItem* echangePeopleItem = new EchangePeopleListItem;
+            echangePeopleItem->setInfo(blueId);
+            m_echangePeopleList->addItem(echangePeopleItem);
+        }
+        m_echangePeopleList->createList();
+        m_echangePeopleListEnable = true;
 
-        //测试代码
-        int blueId1 = 2;
-        int blueId2 = 3;
-        ChangePeopleListItem* changePeopleItem1 = new ChangePeopleListItem;
-        ChangePeopleListItem* changePeopleItem2 = new ChangePeopleListItem;
-        changePeopleItem1->setInfo(blueId1);
-        changePeopleItem2->setInfo(blueId2);
-        m_changePeopleList->addItem(changePeopleItem1);
-        m_changePeopleList->addItem(changePeopleItem2);
-
-        m_changePeopleList->createList();
-        m_changePeopleList->show();
-        m_changePeopleListEnable = true;
 
     }
 }
@@ -674,7 +782,6 @@ void GameMap::slot_armInfoShow(CArm *Armnow)
     Character *character = CGameSystem::Character_Info[id-1];
     //显示武器信息
     m_armInfo->setArmInfo(Armnow);
-    m_armInfo->show();
     m_armInfoEnable = true;
 }
 
@@ -712,7 +819,6 @@ void GameMap::slot_armChoice(CArm *Armnow)
         }
 
         m_tufeiList->createList();
-        m_tufeiList->show();
         m_tufeiListEnable = true;
     }
 }
@@ -721,13 +827,28 @@ void GameMap::slot_armChoice(CArm *Armnow)
 void GameMap::slot_attackReadyInfoShow(int blueId,CArm* arm, int redId)//第二个参数 或者可以考率 CGAME..Using Arm
 {
     m_attackReadyInfo->setInfo(blueId,arm, redId);
-    m_attackReadyInfo->show();
     m_attackReadyInfoEnable = true;
 }
+
+
+
 
 //双方角色可交换的武器信息显示槽函数
 void GameMap::slot_changePeopleArmShow(int peoid1, int peoid2)
 {
-    ;
-}
+    qDebug()<<"bbbbbbbbbbbbbbbbbbbbbbb";
+    m_actionList->hide();
+    m_actionListEnable = false;
 
+    m_echangePeopleList->hide();
+    m_echangePeopleListEnable = false;
+
+    m_echangeArmList1->deleteItemList();
+    m_echangeArmList2->deleteItemList();
+
+    m_echangeArmList1->setInfo(peoid1);
+    m_echangeArmList2->setInfo(peoid2);
+    m_echangeArmList1->show();
+    m_echangeArmList2->show();
+    m_echangeArmListEnable = true;
+}

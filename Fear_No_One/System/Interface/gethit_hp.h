@@ -3,6 +3,14 @@
 
 #include <QWidget>
 #include<CGameSystem.h>
+#include<gamemap.h>
+#include<QPalette>
+
+
+
+
+
+
 namespace Ui {
 class gethit_hp;
 }
@@ -18,10 +26,20 @@ public:
 public:
     int blueid;
     int redid;
-    CArm* Armnow;
+    CArm* Arm1;
+    CArm* Arm2;
+    int ground_id;
     Fightinfo* finfo;
+
 public:
-    void setInfo();
+
+    void setInfo(Fightinfo* Finfo);
+    void Init_ui();
+    void st_Fight();
+
+public slots:
+    void slot_Fightinfo(Fightinfo* Finfo);
+
 private:
     Ui::gethit_hp *ui;
 };

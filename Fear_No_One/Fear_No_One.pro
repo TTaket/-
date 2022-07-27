@@ -31,6 +31,9 @@ SOURCES += \
     Data/Ground/Ground.cpp \
     Data/Map/Map.cpp \
     System/GameSystem/CGameSystem.cpp \
+    System/Interface/echangearmlist.cpp \
+    System/Interface/echangepeoplelist.cpp \
+    System/Interface/echangepeoplelistitem.cpp \
     System/Interface/game.cpp \
     System/Interface/gamechoice.cpp \
     System/Interface/gamechoice2.cpp \
@@ -52,9 +55,7 @@ SOURCES += \
     System/Interface/gamechoice2item.cpp \
     System/Interface/attackreadyinfo.cpp \
     System/Interface/tufeilistitem.cpp \
-    System/Interface/tufeilist.cpp \
-    System/Interface/changepeoplelist.cpp \
-    System/Interface/changepeoplelistitem.cpp
+    System/Interface/tufeilist.cpp
 
 HEADERS += \
     Data/Arms/Arms.h \
@@ -62,6 +63,9 @@ HEADERS += \
     Data/Ground/Ground.h \
     Data/Map/Map.h \
     System/GameSystem/CGameSystem.h \
+    System/Interface/echangearmlist.h \
+    System/Interface/echangepeoplelist.h \
+    System/Interface/echangepeoplelistitem.h \
     System/Interface/game.h \
     System/Interface/gamechoice.h \
     System/Interface/gamechoice2.h \
@@ -83,11 +87,12 @@ HEADERS += \
     System/Interface/gamechoice2item.h \
     System/Interface/attackreadyinfo.h \
     System/Interface/tufeilistitem.h \
-    System/Interface/tufeilist.h \
-    System/Interface/changepeoplelist.h \
-    System/Interface/changepeoplelistitem.h
+    System/Interface/tufeilist.h
 
 FORMS += \
+    System/Interface/echangearmlist.ui \
+    System/Interface/echangepeoplelist.ui \
+    System/Interface/echangepeoplelistitem.ui \
     System/Interface/game.ui \
     System/Interface/gamechoice.ui \
     System/Interface/gamechoice2.ui \
@@ -106,6 +111,4 @@ FORMS += \
     System/Interface/gamechoice2item.ui \
     System/Interface/attackreadyinfo.ui \
     System/Interface/tufeilistitem.ui \
-    System/Interface/tufeilist.ui \
-    System/Interface/changepeoplelist.ui \
-    System/Interface/changepeoplelistitem.ui
+    System/Interface/tufeilist.ui

@@ -1,6 +1,5 @@
 #pragma once
 
-
 //GameSystem
 //1.宏定义 初始化添加到动态数组;
 #define Init_VectorPush(type,id) \
@@ -41,20 +40,54 @@
 
 //8.战斗信息
 struct Fightinfo{
-    int ATKtime;
-    int Hit1;
+    Fightinfo(){
+        ATKtime       =0;
+        Hit1          =0;
+        is_boji1      =0;
+        is_miss1      =0;
+        Hit2          =0;
+        is_boji2      =0;
+        is_miss2      =0;
+        Base_Exp      =0;
+        Add_Exp       =0;
+        Add_Money     =0;
+        Add_shouliandu=0;
+        id1           =0;
+        id2           =0;
+        Groundid      =0;
+        hp1_now       =0;
+        hp1_max       =0;
+        hp2_now       =0;
+        hp2_max       =0;
+        is_die        =0;
+    }
+
+    int  ATKtime;
+    int  Hit1;
     bool is_boji1;
     bool is_miss1;
 
-    int Hit2;
+    int  Hit2;
     bool is_boji2;
     bool is_miss2;
 
-    int Base_Exp;
-    int Add_Exp;
+    int  Base_Exp;
+    int  Add_Exp;
 
-    int Add_Money;
-    int Add_shouliandu;
+    int  Add_Money;
+    int  Add_shouliandu;
+
+    int  id1;
+    int  id2;
+
+    int hp1_now;
+    int hp1_max;
+    int hp2_now;
+    int hp2_max;
+
+    int  Groundid;
+
+    bool is_die;
 
 };
 
@@ -223,7 +256,12 @@ struct Fightinfo{
         CGameSystem::Character_Info[11-1]->m_NowX = 3;   \
         CGameSystem::Character_Info[11-1]->m_NowY = 8
 
-
+//gamemap
+//1. 设置战斗背景宏
+    #define _DEF_Setstring(x)\
+        #x
+    #define _DEF_FightGround_load(x)\
+        _DEF_Setstring(../Fear_No_One/Resource/Photo/Fight_ground##x.png)
 
 
 //make_scene

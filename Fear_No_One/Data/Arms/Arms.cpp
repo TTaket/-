@@ -79,23 +79,23 @@ std::list<int> CArm::Able_UsedtoATKPeoid(int peoid, CArm* CArm){
         int juli = CArm->m_Juli;
         int aim = 0;
         if(x-juli>0 && (aim=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[x-juli][y])){
-            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive)
+            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive && CGameSystem::Character_Info[aim-1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei)
                 ans.push_back(aim);
             aim = 0;
         }
         if(y-juli>0 && (aim = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[x][y-juli])){
-            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive)
+            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive && CGameSystem::Character_Info[aim-1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei)
                 ans.push_back(aim);
             aim = 0;
         }
         if(x+juli<=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapXmax && (aim = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[x+juli][y])){
-            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive)
+            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive && CGameSystem::Character_Info[aim-1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei)
                 ans.push_back(aim);
             aim = 0;
 
         }
         if(y+juli<=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapYmax && (aim = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[x][y+juli])){
-            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive)
+            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive && CGameSystem::Character_Info[aim-1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei)
                 ans.push_back(aim);
             aim = 0;
         }
