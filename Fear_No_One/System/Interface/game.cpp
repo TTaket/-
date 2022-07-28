@@ -89,3 +89,19 @@ void Game::dealJumpWidget(int widgetId)
     ui->sw_game->setCurrentIndex(widgetId);
     //播放跳转音效
 }
+
+
+//关闭事件
+void Game::closeEvent(QCloseEvent *event)
+{
+    int closeApp = QMessageBox::question(this, "关闭", "退出火焰纹章吗？");
+    if(closeApp == QMessageBox::Yes)
+    {
+        CGameSystem::OverGame();
+        event->accept();
+    }
+    else
+    {
+        event->ignore();
+    }
+}

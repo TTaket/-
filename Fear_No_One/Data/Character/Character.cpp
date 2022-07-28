@@ -1,6 +1,6 @@
 #include "Character.h"
 
-Character::Character(int id):m_Islive(1),m_NowX(0),m_NowY(0),m_Ismove(0){
+Character::Character(int id):m_Islive(1),m_NowX(0),m_NowY(0),m_Ismove(1){
 	m_Id = id;
     m_Map_ZhuangTai = 0;
 	m_name.clear();

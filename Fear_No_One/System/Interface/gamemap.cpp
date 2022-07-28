@@ -3,6 +3,7 @@
 #include "Character.h"
 #include "Arms.h"
 #include "Map.h"
+#include <QMessageBox>
 #include <QDebug>
 
 bool GameMap::m_actionListEnable          =0;
@@ -14,6 +15,7 @@ bool GameMap::m_gethithpEnable            =0;
 bool GameMap::m_echangePeopleListEnable   =0;
 bool GameMap::m_echangeArmListEnable      =0;
 bool GameMap::m_shangyaoEnable            =0;
+bool GameMap::m_FunctionlistEnable        =0;
 
 GameMap::GameMap(QWidget *parent) :
     QWidget(parent),
@@ -28,6 +30,7 @@ GameMap::GameMap(QWidget *parent) :
     m_echangePeopleList(NULL),
     m_echangeArmList1(NULL),
     m_echangeArmList2(NULL),
+    m_Functionlist(NULL),
     timer(nullptr),
     TimeId(0),
     m_shangyao(NULL)
@@ -103,12 +106,23 @@ GameMap::GameMap(QWidget *parent) :
                      this,
                      SLOT(slot_useShangYao(bool)));
 
+    m_Functionlist = new Functionlist(this);
+    QObject::connect(m_Functionlist,
+                     SIGNAL(ST_RedWork()),
+                     this,
+                     SLOT(RedWork()));
+
+
     timer = new QTimer(this);
     QObject::connect(timer,
                      SIGNAL(timeout()),
                      this,
                      SLOT(slot_timeadd()));
     timer->start(250);//开始运行
+
+
+
+    m_tool_info = new Tool_Info;
 
     //控件处理
     m_peopleHpInfo->setGeometry(700,0,200,80);
@@ -152,9 +166,14 @@ GameMap::GameMap(QWidget *parent) :
     m_shangyaoEnable = false;
     m_shangyao->setGeometry(320,0, m_shangyao->width(), m_shangyao->height());
 
+
+    m_Functionlist->hide();
+    m_FunctionlistEnable = false;
+    m_Functionlist->setGeometry(750,0, m_Functionlist->width(), m_Functionlist->height());
     //鼠标捕获
     setMouseTracking(true);
     //开启时间片
+
 }
 
 GameMap::~GameMap()
@@ -221,12 +240,18 @@ GameMap::~GameMap()
         delete m_shangyao;
         m_shangyao = NULL;
     }
+    if(m_Functionlist)
+    {
+        delete m_Functionlist;
+        m_Functionlist = NULL;
+    }
 }
 
 //时间片运行
 void GameMap::slot_timeadd(){
     TimeId++;
     updateMap();
+    QCoreApplication::processEvents();//保证完整的show
 }
 //更新地图
 void GameMap::updateMap()
@@ -284,7 +309,7 @@ void GameMap::drawPixmap(QPainter *painter){
     //显示控件peopleHpInfo 和 GroundTypeInfo
     if(!m_actionListEnable && !m_armListEnable && !m_armInfoEnable
             && !m_tufeiListEnable && !m_attackReadyInfoEnable && !m_gethithpEnable
-            && !m_echangePeopleListEnable && !m_echangeArmListEnable
+            && !m_echangePeopleListEnable && !m_echangeArmListEnable && !m_FunctionlistEnable
             && !key_controlAble){//在进行别的操作的时候不弹出这个画面
         m_groundTypeInfo->ground_id  = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[Mouse_pos_relativelyX][Mouse_pos_relativelyY];
         m_peopleHpInfo->setInfo();//更新数据
@@ -354,7 +379,11 @@ void GameMap::drawPixmap(QPainter *painter){
             for(j=1;j<=groundMap->m_MapYmax;j++)
             {
                   if(groundMap->m_Peopleid[i][j] !=0 && CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_Islive){
-                      image.load(CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_MappicPos[CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_Map_ZhuangTai][TimeId%3]);
+                      if(CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_Ismove){
+                        image.load(CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_MappicPos[CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_Map_ZhuangTai][TimeId%3][1]);
+                      }else{
+                        image.load(CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_MappicPos[CGameSystem::Character_Info[groundMap->m_Peopleid[i][j]-1]->m_Map_ZhuangTai][TimeId%3][0]);
+                      }
                       scaled_width = this->width()/groundMap->m_MapXmax;
                       scaled_height = this->height()/groundMap->m_MapYmax;
                       image = image.mirrored(true, true);
@@ -434,17 +463,17 @@ void GameMap::drawPixmap(QPainter *painter){
         m_echangeArmList1->hide();
         m_echangeArmList2->hide();
     }
-//    if(GameMap::m_actionListEnable){//行动链表
-//        m_actionList->show();
-//    }else{
-//        m_actionList->hide();
-//    }
-
-    if(GameMap::m_shangyaoEnable){
+    if(GameMap::m_shangyaoEnable){//伤药
         m_shangyao->show();
     }else{
         m_shangyao->hide();
     }
+    if(GameMap::m_FunctionlistEnable){
+        m_Functionlist->show();
+    }else{
+        m_Functionlist->hide();
+    }
+
 
 
 
@@ -475,7 +504,7 @@ void GameMap::mousePressEvent(QMouseEvent *event){
     //根据鼠标位置获得相对坐标
     if(!m_actionListEnable && !m_armListEnable && !m_armInfoEnable
             && !m_tufeiListEnable && !m_attackReadyInfoEnable && !m_gethithpEnable
-            && !m_echangePeopleListEnable && !m_echangeArmListEnable
+            && !m_echangePeopleListEnable && !m_echangeArmListEnable&& !m_FunctionlistEnable
             && !key_controlAble){
         int Mouse_pos_relativelyX = CGameSystem::Mouse_X/60+1;
         int Mouse_pos_relativelyY = (CGameSystem::Sys_Window_Height - CGameSystem::Mouse_Y)/60+1;
@@ -484,7 +513,7 @@ void GameMap::mousePressEvent(QMouseEvent *event){
         qDebug()<<"单击：鼠标Y的相对位置" << Mouse_pos_relativelyY;
 
         int tmppeople_id  = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[Mouse_pos_relativelyX][Mouse_pos_relativelyY];
-        if(!tmppeople_id || !CGameSystem::Character_Info[tmppeople_id -1]->m_Islive ||CGameSystem::Character_Info[tmppeople_id -1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei )  {//特例退出
+        if(!tmppeople_id || !CGameSystem::Character_Info[tmppeople_id -1]->m_Islive ||CGameSystem::Character_Info[tmppeople_id -1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei  || !CGameSystem::Character_Info[tmppeople_id -1]->m_Ismove)  {//特例退出
             return;
         }
         CGameSystem::change_using_peoid(tmppeople_id); //获取当前选定的角色id
@@ -522,7 +551,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
     */
     if(!m_actionListEnable && !m_armListEnable && !m_armInfoEnable
             && !m_tufeiListEnable && !m_attackReadyInfoEnable
-            && !m_echangePeopleListEnable && !m_echangeArmListEnable
+            && !m_echangePeopleListEnable && !m_echangeArmListEnable&& !m_FunctionlistEnable
             && key_controlAble)
     {
         switch(op){
@@ -617,6 +646,9 @@ void GameMap::keyPressEvent(QKeyEvent *event){
         if(op == Qt::Key_Escape)
         {
             //控件显示和隐藏控制
+            if(m_FunctionlistEnable){//function的回退
+                m_FunctionlistEnable = false;
+            }
             if(m_actionListEnable) //动作 回退
             {
                 m_actionListEnable = false;
@@ -713,6 +745,9 @@ void GameMap::actionListShow()
         }
         m_actionList->addItem(item);
     }
+    ActionListItem* item = new ActionListItem;
+    item->setInfo("待机");
+    m_actionList->addItem(item);
 
     m_actionList->createList();
     m_actionListEnable = true;
@@ -753,10 +788,11 @@ void GameMap::slot_action(QString actionName)
         //2.显示
         m_armList->createList();
         m_armListEnable = true;
+        OverAction();//每种操作后都禁止选中
     }
     else if(!strcmp(actionName.toStdString().c_str(), "治疗"))
     {
-        ;
+        OverAction();//每种操作后都禁止选中
     }
     else if(!strcmp(actionName.toStdString().c_str(), "物品"))
     {
@@ -783,6 +819,7 @@ void GameMap::slot_action(QString actionName)
         //2.显示
         m_armList->createList();
         m_armListEnable = true;
+        OverAction();//每种操作后都禁止选中
     }
     else if(!strcmp(actionName.toStdString().c_str(), "交互"))
     {
@@ -798,6 +835,7 @@ void GameMap::slot_action(QString actionName)
 
 //        int id = CGameSystem::Able_UsedtoGroundFun(guangkaid,x,y);
 //        CGameSystem::side_story_used(id);
+        OverAction();//每种操作后都禁止选中
     }
     else if(!strcmp(actionName.toStdString().c_str(), "交换"))
     {
@@ -822,8 +860,13 @@ void GameMap::slot_action(QString actionName)
         }
         m_echangePeopleList->createList();
         m_echangePeopleListEnable = true;
+        OverAction();//每种操作后都禁止选中
 
-
+    }
+    else if(!strcmp(actionName.toStdString().c_str(), "待机"))
+    {
+        m_actionListEnable = false;
+        OverAction();//每种操作后都禁止选中
     }
 }
 
@@ -909,3 +952,316 @@ void GameMap::slot_changePeopleArmShow(int peoid1, int peoid2)
     m_echangeArmList2->setInfo(peoid2);
     m_echangeArmListEnable = true;
 }
+
+void GameMap::on_pb_ShowFunction_clicked()
+{
+    m_FunctionlistEnable = true;
+}
+//待机
+void GameMap::OverAction(){
+    CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_Ismove = 0;
+    qDebug()<<CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_Id -_DEF_Character_BASE;
+}
+
+
+//-----------------------------自动移动
+int GameMap::RedWork_AIATKPeo(int peoid,int round){//能攻击到的最好目标；
+    std::list<int>ans;
+        int x =  CGameSystem::Character_Info[peoid-1]->m_NowX;
+        int y =  CGameSystem::Character_Info[peoid-1]->m_NowY;
+        int juli = 1;
+        int aim = 0;
+        if(x-juli>0 && (aim=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[x-juli][y])){
+            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive)
+                ans.push_back(aim);
+            aim = 0;
+        }
+        if(y-juli>0 && (aim = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[x][y-juli])){
+            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive)
+                ans.push_back(aim);
+            aim = 0;
+        }
+        if(x+juli<=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapXmax && (aim = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[x+juli][y])){
+            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive)
+                ans.push_back(aim);
+            aim = 0;
+
+        }
+        if(y+juli<=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapYmax && (aim = CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[x][y+juli])){
+            if(aim && CGameSystem::Character_Info[aim-1]->m_Islive)
+                ans.push_back(aim);
+            aim = 0;
+        }
+    int tmpnowhp = 0x3f3f3f3f;
+    int res = 0;
+    for(auto it = ans.begin();it!=ans.end();it++){//TODO：可优化内部优先级 领主》弓箭》剑士》骑士
+        if(CGameSystem::Character_Info[(*it)-1]->m_Attributes.m_HpNow < tmpnowhp ){
+            res = (*it);
+            tmpnowhp = CGameSystem::Character_Info[(*it)-1]->m_Attributes.m_HpNow;
+        }
+    }
+    return res;
+};
+void GameMap::RedWork_AIMovetoPeo(int id){//智能移动
+    std::map<int,int>disfind;//人物 - juli;
+    //计算当前单位到所有单位的距离 并且排序;
+    std::priority_queue<MoveInfo*>q;
+    int Maxmapx =CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapXmax;
+    int Maxmapy =CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapYmax;
+    int fangxiang[_DEF_MAP_MAX][_DEF_MAP_MAX]={};//标记怎么到达的这个点；
+    int step[_DEF_MAP_MAX][_DEF_MAP_MAX]={};//这个点的步数;
+
+
+
+
+    auto findway = [&](int aimid,int moveval)->std::list<int>{
+        //获得起始时候的坐标位置
+        std::list<int>res;
+        int posx = CGameSystem::Character_Info[aimid-1]->m_NowX;
+        int posy = CGameSystem::Character_Info[aimid-1]->m_NowY;
+        while(fangxiang[posx][posy] != _DEF_AIMove_Fangxiang_start /*&& posx>0 && posy>0 && posx<=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapXmax && posy <=CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_MapYmax */){
+            switch (fangxiang[posx][posy]) {
+                case _DEF_AIMove_Fangxiang_up:
+                    posx;
+                    posy--;
+                    if(step[posx][posy]<=moveval)
+                        res.push_front(_DEF_AIMove_Fangxiang_up);
+                    //动画
+                    break;
+                case _DEF_AIMove_Fangxiang_left:
+                    posx++;
+                    posy;
+                    if(step[posx][posy]<=moveval)
+                        res.push_front(_DEF_AIMove_Fangxiang_left);
+                    break;
+                case _DEF_AIMove_Fangxiang_down:
+                    posx;
+                    posy++;
+                    if(step[posx][posy]<=moveval)
+                        res.push_front(_DEF_AIMove_Fangxiang_down);
+                    break;
+                case _DEF_AIMove_Fangxiang_right:
+                    posx--;
+                    posy;
+                    if(step[posx][posy]<=moveval)
+                        res.push_front(_DEF_AIMove_Fangxiang_right);
+                    break;
+                default:
+                    qDebug()<<"AI findway err";
+                    break;
+            }
+
+        }
+        return res;
+    };//返回行走方式的链表
+    auto goway = [&](std::list<int> movewaylist,int id)->void{
+        if(!movewaylist.empty())
+            movewaylist.pop_back();
+        for(auto it = movewaylist.begin();it!=movewaylist.end();it++){
+            switch ((*it)) {
+                case _DEF_AIMove_Fangxiang_up:
+                    CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[id-1]->m_NowX][CGameSystem::Character_Info[id-1]->m_NowY] = 0;
+                    CGameSystem::Character_Info[id-1]->m_NowX;
+                    CGameSystem::Character_Info[id-1]->m_NowY+=1;
+                    CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[id-1]->m_NowX][CGameSystem::Character_Info[id-1]->m_NowY] = id;
+                    break;
+                case _DEF_AIMove_Fangxiang_left:
+                    CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[id-1]->m_NowX][CGameSystem::Character_Info[id-1]->m_NowY] = 0;
+                    CGameSystem::Character_Info[id-1]->m_NowX-=1;
+                    CGameSystem::Character_Info[id-1]->m_NowY;
+                    CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[id-1]->m_NowX][CGameSystem::Character_Info[id-1]->m_NowY] = id;
+
+                    //动画
+                    break;
+                case _DEF_AIMove_Fangxiang_down:
+                    CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[id-1]->m_NowX][CGameSystem::Character_Info[id-1]->m_NowY] = 0;
+                    CGameSystem::Character_Info[id-1]->m_NowX;
+                    CGameSystem::Character_Info[id-1]->m_NowY-=1;
+                    CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[id-1]->m_NowX][CGameSystem::Character_Info[id-1]->m_NowY] = id;
+
+                    //动画
+                    break;
+                case _DEF_AIMove_Fangxiang_right:
+                    CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[id-1]->m_NowX][CGameSystem::Character_Info[id-1]->m_NowY] = 0;
+                    CGameSystem::Character_Info[id-1]->m_NowX+=1;
+                    CGameSystem::Character_Info[id-1]->m_NowY;
+                    CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[id-1]->m_NowX][CGameSystem::Character_Info[id-1]->m_NowY] = id;
+
+                    //动画
+                    break;
+                default:
+                    qDebug()<<"AI move err";
+                    break;
+            }
+            updateMap();
+            QCoreApplication::processEvents();
+            QThread::msleep(500);
+
+        }
+    };//行走
+
+
+
+
+    //bfs开始
+    MoveInfo *stpos = new MoveInfo{CGameSystem::Character_Info[id-1]->m_NowX ,CGameSystem::Character_Info[id-1]->m_NowY,_DEF_COLOR_GROUND_BLUE,0};
+    fangxiang[CGameSystem::Character_Info[id-1]->m_NowX][CGameSystem::Character_Info[id-1]->m_NowY] = _DEF_AIMove_Fangxiang_start;
+    q.push(stpos);
+    while(!q.empty()){
+        int xnow = q.top()->x;
+        int ynow = q.top()->y;
+        int stepnow = q.top()->step;
+        q.pop();
+        //左
+        if(xnow-1>0 && !fangxiang[xnow-1][ynow]){
+            fangxiang[xnow-1][ynow] = _DEF_AIMove_Fangxiang_left;
+            if(CGameSystem::CGround_Map_Info[CGameSystem::CGameSystem::Checkpoint-1]->m_Peopleid[xnow-1][ynow]!=0 && CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow-1][ynow]-1]->m_Islive){//有人
+                if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow-1][ynow]-1]->m_Attributes.m_Job!=_DEF_Character_Job_TuFei)
+                    disfind[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow-1][ynow]] = stepnow;//放到能到达位置信息里
+            }else{
+                if(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow-1][ynow]-1]->m_ablewalk){//可通过
+                    MoveInfo *pos1 = new MoveInfo{xnow-1 ,ynow, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow-1][ynow]-1]->m_Move};
+                    step[xnow-1][ynow] = stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow-1][ynow]-1]->m_Move;//维护步数
+                    q.push(pos1);
+                }
+            }
+        }
+        //下
+        if(ynow-1>0 && !fangxiang[xnow][ynow-1]){
+            fangxiang[xnow][ynow-1] = _DEF_AIMove_Fangxiang_down;
+            if(CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow][ynow-1]!=0 && CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow][ynow-1]-1]->m_Islive){//有人
+                if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow][ynow-1]-1]->m_Attributes.m_Job!=_DEF_Character_Job_TuFei)
+                    disfind[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow][ynow-1]] = stepnow;//放到能到达位置信息里
+            }else{
+                if(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow][ynow-1]-1]->m_ablewalk){//不可通过
+                    MoveInfo *pos2 = new MoveInfo{xnow ,ynow-1, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow][ynow-1]-1]->m_Move};
+                    step[xnow][ynow-1] = stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow][ynow-1]-1]->m_Move;//维护步数
+                    q.push(pos2);
+                }
+            }
+        }
+
+        //右
+        if(xnow+1<=Maxmapx && !fangxiang[xnow+1][ynow]){
+            fangxiang[xnow+1][ynow] = _DEF_AIMove_Fangxiang_left;
+            if(CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow+1][ynow]!=0 && CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow+1][ynow]-1]->m_Islive){//有人
+                if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow+1][ynow]-1]->m_Attributes.m_Job!=_DEF_Character_Job_TuFei)
+                    disfind[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow+1][ynow]] = stepnow;//放到能到达位置信息里
+            }else{
+                if(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow+1][ynow]-1]->m_ablewalk){//不可通过
+                    MoveInfo *pos3 = new MoveInfo{xnow+1 ,ynow, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow+1][ynow]-1]->m_Move};
+                    step[xnow+1][ynow] = stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow+1][ynow]-1]->m_Move;////维护步数
+                    q.push(pos3);
+                }
+            }
+        }
+        //上
+        if(ynow+1<=Maxmapy && !fangxiang[xnow][ynow+1]){
+            fangxiang[xnow][ynow+1] = _DEF_AIMove_Fangxiang_down;
+            if(CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow][ynow+1]!=0 && CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow][ynow+1]-1]->m_Islive){//有人
+                if(CGameSystem::Character_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow][ynow+1]-1]->m_Attributes.m_Job!=_DEF_Character_Job_TuFei)
+                    disfind[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[xnow][ynow+1]] = stepnow;//放到能到达位置信息里
+            }else{
+                if(CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow][ynow+1]-1]->m_ablewalk){//不可通过
+                    MoveInfo *pos4 = new MoveInfo{xnow ,ynow+1, _DEF_COLOR_GROUND_BLUE,stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow][ynow+1]-1]->m_Move};
+                    step[xnow][ynow+1] = stepnow+CGameSystem::Ground_Info[CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[xnow][ynow+1]-1]->m_Move;//维护步数
+                    q.push(pos4);
+                }
+            }
+        }
+    }//bfs找到所有人的位置;
+    //sort(disfind.begin(),disfind.end());   // map自动排序
+    //调试
+    QString str = QString("土匪 %1 ： 找到了%2 个存活人物").arg(id).arg(disfind.size());
+    qDebug()<<str;
+
+    int MoveAbility = CGameSystem::Character_Info[id-1]->m_Attributes.Sudu/4+5;
+    //考虑移动力 处理出来攻击的人
+    std::list<int>able_atk;//
+    for(auto it = disfind.begin();it!=disfind.end();it++){
+        if(it->second <= MoveAbility){
+            able_atk.push_back(it->first);
+        }else{
+            continue;
+        }
+    }
+    if(!able_atk.empty()){//如果有在攻击范围内的 直接移动到附近（A*寻路）
+        int minhp = 0x3f3f3f3f;
+        int minhpid = -1;
+        //寻找最小生命值的单位；
+        for(auto it = able_atk.begin();it!=able_atk.end();it++){
+           if(minhp > CGameSystem::Character_Info[(*it)-1]->m_Attributes.m_HpNow){
+               minhp = CGameSystem::Character_Info[(*it)-1]->m_Attributes.m_HpNow;
+               minhpid = (*it);
+           }
+        }
+        //最短的方式走过去
+        std::list<int>movewaylist = findway(minhpid,MoveAbility);
+        //TODO：走过去；
+        goway(movewaylist,id);
+    }else{//如果没有在范围内但是在二倍范围内的 最近的 最短路径移动过去 ；
+        int doubledisaim = 0;//
+        if(disfind.begin()->second <= 3*MoveAbility){
+            doubledisaim = disfind.begin()->first;
+        }
+        if(doubledisaim){
+            std::list<int>movewaylist = findway(doubledisaim,MoveAbility);
+            goway(movewaylist,id);
+        }
+        //无法移动
+    }
+};
+
+
+void GameMap::RedWork(){
+    CGameSystem::WoFangXingDong = 0;
+    m_tool_info->showinfo("敌方回合");
+
+    for(auto it = CGameSystem::Character_Info.begin();it!=CGameSystem::Character_Info.end();it++){
+        if((*it)->m_Islive && (*it)->m_Attributes.m_Job != _DEF_Character_Job_TuFei){
+            (*it)->m_Ismove = 0;
+        }
+    }
+    CGameSystem::WoFangXingDong = 0;
+    for(auto it = CGameSystem::Character_Info.begin();it!=CGameSystem::Character_Info.end();it++){
+        if((*it)->m_Islive && (*it)->m_Attributes.m_Job == _DEF_Character_Job_TuFei){
+            (*it)->m_Ismove = 1;
+        }
+    }
+    //闪出标志;
+    //切换背景音乐;
+    for(auto it = CGameSystem::Character_Info.begin();it!=CGameSystem::Character_Info.end();it++){
+        if((*it)->m_Islive && (*it)->m_Attributes.m_Job == _DEF_Character_Job_TuFei){
+            if(CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Groundid[(*it)->m_NowX][(*it)->m_NowY] == 8){//如果王座
+                //在座位上找攻击范围内的人
+                    int aim = 0;
+                    if(aim = RedWork_AIATKPeo((*it)->m_Id-_DEF_Character_BASE,1)){
+                        CGameSystem::GetHit((*it)->m_Id-_DEF_Character_BASE , (*it)->m_Zhuangbei , aim);
+                    }
+                }
+
+            RedWork_AIMovetoPeo((*it)->m_Id-_DEF_Character_BASE);//自动移动;
+            int aim = 0;
+            if(aim = RedWork_AIATKPeo((*it)->m_Id-_DEF_Character_BASE,1)){//如果有可以打到的人 攻击；
+                Fightinfo* finfo = CGameSystem::GetHit((*it)->m_Id-_DEF_Character_BASE , (*it)->m_Zhuangbei , aim);
+                m_gethithp->slot_Fightinfo(finfo);
+            }
+        }
+    }
+    //停止
+    BlueWork();
+};
+void GameMap::BlueWork(){
+    CGameSystem::WoFangXingDong = 1;
+    //闪出标志;
+     m_tool_info->showinfo("我方回合");
+    //切换背景音乐;
+    //1.设置所有人可以移动
+    for(auto it = CGameSystem::Character_Info.begin();it!=CGameSystem::Character_Info.end();it++){
+        if((*it)->m_Islive && (*it)->m_Attributes.m_Job != _DEF_Character_Job_TuFei){
+            (*it)->m_Ismove = 1;
+        }
+    }
+    //只通过信号改变;
+};
+

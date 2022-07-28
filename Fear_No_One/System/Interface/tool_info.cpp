@@ -14,10 +14,11 @@ Tool_Info::~Tool_Info()
 {
     delete ui;
 }
+
 void Tool_Info::showinfo(QString qstr){
     ui->lb_Info->setText(qstr);
     this->show();
     QCoreApplication::processEvents();
-    QThread::msleep(2000);
+    QThread::msleep(1000);
     this->hide();
 }

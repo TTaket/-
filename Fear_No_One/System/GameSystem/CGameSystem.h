@@ -5,6 +5,7 @@
 #include <map>
 #include <utility>
 #include <QDebug>
+#include <QThread>
 #include <set>
 #include <windows.h>
 
@@ -48,10 +49,7 @@ public:
     static std::list<MoveInfo*> Able_UsedtoMove(int id);//可移动的范围链表；
     static int Able_UsedtoGroundFun(int guankaid,int x,int y);//是否可以与地形交互 - 返回值是 地皮id/0
     static std::list<int> Able_UsedtoExchange(int id);//是否可以交换物品
-    static void RedWork();//ai人机行动//TODO:
-    static int RedWork_AIATKPeo(int peoid,int round);//ai人机行动-返回最合适的攻击目标；
-    static void RedWork_AIMovetoPeo(int peoid);//ai人机行动-自己移动
-    static void BlueWork();//我方行动
+
 
 
 
@@ -60,7 +58,8 @@ public:
 //2.移动范围 --触发移动函数；
 //1.我方行动结束
 //信号函数
-//1.移动范围
+
+
 
 public:
 	//动态数组可以根据id o1的查询 所以取代了链表

@@ -13,11 +13,7 @@ EchangePeopleList::EchangePeopleList(QWidget *parent) :
                                       .scaled(ui->lb_changePeopleListTitleBackground->width(),
                                               ui->lb_changePeopleListTitleBackground->height()));
 
-    ui->lb_changPeopleListBackground->setPixmap(QPixmap("../Fear_No_One/Resource/Photo/actionlist.jpg")
-                                          .scaled(ui->lb_changPeopleListBackground->width(),
-                                                  ui->lb_changPeopleListBackground->height()));
 
-    ui->lw_changePeopleList->setStyleSheet("background-color:transparent");
 }
 
 EchangePeopleList::~EchangePeopleList()

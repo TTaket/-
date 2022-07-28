@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <QList>
 #include <QTimer>
+#include <QVector>
 #include <QThread>
 #include "peoplehpinfo.h"
 #include "groundtypeinfo.h"
@@ -26,6 +27,8 @@
 #include "echangepeoplelistitem.h"
 #include "echangearmlist.h"
 #include "shangyao.h"
+#include "functionlist.h"
+#include "tool_info.h"
 
 
 
@@ -49,9 +52,11 @@ public:
 
     //更新地图
     void updateMap();
-
+    //设置待机
+    void OverAction();
     //角色移动完成后，显示动作列表
     void actionListShow();
+
 
 signals:
     void SIG_jumpWidget(int id);
@@ -75,6 +80,11 @@ private slots:
     void slot_changePeopleArmShow(int peoid1, int peoid2);
     //时间推进
     void slot_timeadd();
+    void on_pb_ShowFunction_clicked();
+    //红色行动
+    void RedWork();//ai人机行动//TODO:
+
+
 
 private:
     Ui::GameMap *ui;
@@ -98,8 +108,9 @@ private:
     EchangeArmList* m_echangeArmList1;
     EchangeArmList* m_echangeArmList2;
 
-    ShangYao* m_shangyao;
 
+    ShangYao* m_shangyao;
+    Functionlist* m_Functionlist;
 public:
     //这些用来标记控件是否显示，在按下ESC按键时需要用到
     static bool m_actionListEnable;
@@ -111,6 +122,7 @@ public:
     static bool m_echangePeopleListEnable;
     static bool m_echangeArmListEnable;
     static bool m_shangyaoEnable;
+    static bool m_FunctionlistEnable;
 
 //绘制地图
 public:
@@ -129,12 +141,18 @@ public:
     bool key_controlAble;
     int Xreset;
     int Yreset;
-
+//信息
+    Tool_Info * m_tool_info;
 //时间相关
 public:
     int TimeId;
     QTimer* timer;
 
+//AI移动
+
+int RedWork_AIATKPeo(int peoid,int round);//ai人机行动-返回最合适的攻击目标；
+void RedWork_AIMovetoPeo(int peoid);//ai人机行动-自己移动
+void BlueWork();//我方行动
 };
 
 

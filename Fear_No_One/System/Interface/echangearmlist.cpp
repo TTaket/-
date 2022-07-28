@@ -6,6 +6,11 @@ EchangeArmList::EchangeArmList(QWidget *parent) :
     ui(new Ui::EchangeArmList)
 {
     ui->setupUi(this);
+
+    ui->lw_blueArmList->setStyleSheet("background-color:transparent");
+    ui->lb_blueListBackground->setPixmap(QPixmap("../Fear_No_One/Resource/Photo/armlist.png")
+                                          .scaled(ui->lb_blueListBackground->width(),
+                                                  ui->lb_blueListBackground->height()));
 }
 
 EchangeArmList::~EchangeArmList()

@@ -6,9 +6,9 @@ ShangYao::ShangYao(QWidget *parent) :
     ui(new Ui::ShangYao)
 {
     ui->setupUi(this);
-
+    ui->lb_backGround->setPixmap(QPixmap("../Fear_No_One/Resource/Photo/armlist.png").scaled(ui->lb_backGround->width(), ui->lb_backGround->height()));
     QString str = "";
-    str.append("使用伤药后，Hp恢复1点\n");
+    str.append("使用伤药后，Hp恢复25点\n");
     str.append("确定要使用伤药吗？");
     ui->lb_tip->setText(str);
 }

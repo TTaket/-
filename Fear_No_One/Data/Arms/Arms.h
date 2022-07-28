@@ -42,7 +42,7 @@ public:
     std::list<int> Able_UsedtoTreatPeoid(int peoid,CArm* CArm);//该武器可治疗到的人的id
     void Used_ATK(int peo,int aim);//使用这个武器去攻击
     void Used_Treat(int peo,int aim);//使用这个法杖去治疗
-    void Used_Thing(int x);//使用这个物品
+    void Used_Thing(int peoid);//使用这个物品 参数为人物id
 
     void CArm_AddNum(int x);//增加数量
     bool CArm_SubNum(int x);//减少数量

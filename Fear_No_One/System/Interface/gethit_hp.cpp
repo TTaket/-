@@ -194,8 +194,8 @@ void gethit_hp::st_Fight(){
         tinfo->showinfo(QString("您的熟练度提升"));
     }
     //(int id ,int level1 , int Exp1 ,int addExp);
-
-    m_gethit_exp->show_ui(finfo->id1,finfo->Base_level,finfo->Base_Exp,finfo->Add_Exp);
+    if(CGameSystem::Character_Info[blueid-1]->m_Attributes.m_Job!=_DEF_Character_Job_TuFei)
+        m_gethit_exp->show_ui(finfo->id1,finfo->Base_level,finfo->Base_Exp,finfo->Add_Exp);
 }
 
 

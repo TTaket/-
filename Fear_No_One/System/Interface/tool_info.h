@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QThread>
+#include <QTimer>
 namespace Ui {
 class Tool_Info;
 }
@@ -15,6 +16,8 @@ public:
     explicit Tool_Info(QWidget *parent = nullptr);
     ~Tool_Info();
     void showinfo(QString qstr);
+
+
 private:
     Ui::Tool_Info *ui;
 };

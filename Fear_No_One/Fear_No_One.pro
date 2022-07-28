@@ -33,9 +33,11 @@ SOURCES += \
     Data/Ground/Ground.cpp \
     Data/Map/Map.cpp \
     System/GameSystem/CGameSystem.cpp \
+    System/Interface/duiwu.cpp \
     System/Interface/echangearmlist.cpp \
     System/Interface/echangepeoplelist.cpp \
     System/Interface/echangepeoplelistitem.cpp \
+    System/Interface/functionlist.cpp \
     System/Interface/game.cpp \
     System/Interface/gamechoice.cpp \
     System/Interface/gamechoice2.cpp \
@@ -68,9 +70,11 @@ HEADERS += \
     Data/Ground/Ground.h \
     Data/Map/Map.h \
     System/GameSystem/CGameSystem.h \
+    System/Interface/duiwu.h \
     System/Interface/echangearmlist.h \
     System/Interface/echangepeoplelist.h \
     System/Interface/echangepeoplelistitem.h \
+    System/Interface/functionlist.h \
     System/Interface/game.h \
     System/Interface/gamechoice.h \
     System/Interface/gamechoice2.h \
@@ -98,9 +102,11 @@ HEADERS += \
     System/Interface/mygamesound.h
 
 FORMS += \
+    System/Interface/duiwu.ui \
     System/Interface/echangearmlist.ui \
     System/Interface/echangepeoplelist.ui \
     System/Interface/echangepeoplelistitem.ui \
+    System/Interface/functionlist.ui \
     System/Interface/game.ui \
     System/Interface/gamechoice.ui \
     System/Interface/gamechoice2.ui \

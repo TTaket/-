@@ -97,6 +97,10 @@
     </rect>
    </property>
   </widget>
+  <zorder>lb_changPeopleListBackground</zorder>
+  <zorder>lb_changePeopleListTitleBackground</zorder>
+  <zorder>lb_changePeopleListTitle</zorder>
+  <zorder>lw_changePeopleList</zorder>
  </widget>
  <resources/>
  <connections/>

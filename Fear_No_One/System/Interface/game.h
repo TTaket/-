@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <QWidget>
+#include <QMessageBox>
 #include "gamestart.h"
 #include "gamechoice.h"
 #include "gamechoice2.h"
@@ -31,6 +32,10 @@ private:
     GameChoice* m_gameChoice;
     GameChoice2* m_gameChoice2;
     GameMap* m_gameMap;
+
+//游戏的关闭
+public:
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // GAME_H
