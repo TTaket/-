@@ -1,8 +1,10 @@
 QT       += core gui
+QT       += multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
+CONFIG += resources_big
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -56,7 +58,9 @@ SOURCES += \
     System/Interface/gamechoice2item.cpp \
     System/Interface/attackreadyinfo.cpp \
     System/Interface/tufeilistitem.cpp \
-    System/Interface/tufeilist.cpp
+    System/Interface/tufeilist.cpp \
+    System/Interface/shangyao.cpp \
+    System/Interface/mygamesound.cpp
 
 HEADERS += \
     Data/Arms/Arms.h \
@@ -89,7 +93,9 @@ HEADERS += \
     System/Interface/gamechoice2item.h \
     System/Interface/attackreadyinfo.h \
     System/Interface/tufeilistitem.h \
-    System/Interface/tufeilist.h
+    System/Interface/tufeilist.h \
+    System/Interface/shangyao.h \
+    System/Interface/mygamesound.h
 
 FORMS += \
     System/Interface/echangearmlist.ui \
@@ -114,4 +120,5 @@ FORMS += \
     System/Interface/attackreadyinfo.ui \
     System/Interface/tool_info.ui \
     System/Interface/tufeilistitem.ui \
-    System/Interface/tufeilist.ui
+    System/Interface/tufeilist.ui \
+    System/Interface/shangyao.ui

@@ -2,6 +2,7 @@
 #define MYBUTTONGAMECHOICE_H
 
 #include <QPushButton>
+#include "CGameSystem.h"
 
 class MyButtonGameChoice : public QPushButton
 {

@@ -23,13 +23,14 @@ void PeopleHpInfo::setInfo(){//设置信息
             ui->lb_hpName->setText("No Peo");
             ui->lb_levelval->setText("NULL");
         }
-        else{
-        QPixmap pixmap = CGameSystem::Character_Info[people_id-1]->m_iconPos;
-        pixmap.scaled(ui->lb_hpIcon->size(), Qt::KeepAspectRatio);
-        ui->lb_hpIcon->setScaledContents(true);
-        ui->lb_hpIcon->setPixmap(pixmap);
-        ui->lb_hpName->setText(QString::fromStdString( CGameSystem::Character_Info[people_id-1]->m_name));
-        ui->lb_hpValue->setText(QString("%1/%2").arg(CGameSystem::Character_Info[people_id-1]->m_Attributes.m_HpNow).arg(CGameSystem::Character_Info[people_id-1]->m_Attributes.m_HpMax));
-        ui->lb_levelval->setText(QString::number(CGameSystem::Character_Info[people_id-1]->m_Attributes.m_Level));
+        else
+        {
+            QPixmap pixmap = CGameSystem::Character_Info[people_id-1]->m_iconPos;
+            pixmap.scaled(ui->lb_hpIcon->size(), Qt::KeepAspectRatio);
+            ui->lb_hpIcon->setScaledContents(true);
+            ui->lb_hpIcon->setPixmap(pixmap);
+            ui->lb_hpName->setText(QString::fromStdString( CGameSystem::Character_Info[people_id-1]->m_name));
+            ui->lb_hpValue->setText(QString("%1/%2").arg(CGameSystem::Character_Info[people_id-1]->m_Attributes.m_HpNow).arg(CGameSystem::Character_Info[people_id-1]->m_Attributes.m_HpMax));
+            ui->lb_levelval->setText(QString::number(CGameSystem::Character_Info[people_id-1]->m_Attributes.m_Level));
         }
 }

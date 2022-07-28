@@ -59,29 +59,31 @@ void GameChoice::drawPixmap(QPainter *painter){
 //继续游戏
 void GameChoice::slot_pb_continue()
 {
-   ;
+   CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
 }
 
 //开始新的游戏
 void GameChoice::slot_pb_start()
 {
+    CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
     Q_EMIT SIG_jumpWidget(3);
 }
 
 //返回上一页
 void GameChoice::slot_pb_return()
 {
+    CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
     Q_EMIT SIG_jumpWidget(1);
 }
 
 //删除记录
 void GameChoice::slot_pb_delete()
 {
-    ;
+    CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
 }
 
 //复制记录
 void GameChoice::slot_pb_copy()
 {
-    ;
+    CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
 };

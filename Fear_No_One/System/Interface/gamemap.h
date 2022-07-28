@@ -25,6 +25,7 @@
 #include "echangepeoplelist.h"
 #include "echangepeoplelistitem.h"
 #include "echangearmlist.h"
+#include "shangyao.h"
 
 
 
@@ -67,6 +68,8 @@ private slots:
     void slot_armChoice(CArm* Armnow);
     //玩家选择要攻击的土匪后，战斗前，显示双方信息
     void slot_attackReadyInfoShow(int blueId,CArm*Armnow, int redId);
+    //伤药使用槽函数
+    void slot_useShangYao(bool yes);
 
     //双方角色可交换的武器信息显示槽函数
     void slot_changePeopleArmShow(int peoid1, int peoid2);
@@ -95,6 +98,8 @@ private:
     EchangeArmList* m_echangeArmList1;
     EchangeArmList* m_echangeArmList2;
 
+    ShangYao* m_shangyao;
+
 public:
     //这些用来标记控件是否显示，在按下ESC按键时需要用到
     static bool m_actionListEnable;
@@ -102,10 +107,10 @@ public:
     static bool m_armInfoEnable;
     static bool m_tufeiListEnable;
     static bool m_attackReadyInfoEnable;
-    static bool m_changePeopleListEnable;
     static bool m_gethithpEnable;
     static bool m_echangePeopleListEnable;
     static bool m_echangeArmListEnable;
+    static bool m_shangyaoEnable;
 
 //绘制地图
 public:

@@ -11,6 +11,7 @@ void MyButtonGameChoice::enterEvent(QEvent *e)
     //按键闪烁
     setFont(QFont("华文秀丽_CNKI",19));
     //播放选择音效
+    CGameSystem::m_gameSound->gameMouseMoveToChoiceSoundPlay(true);
 }
 
 //重写鼠标移出事件

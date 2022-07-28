@@ -10,6 +10,7 @@ void MyButtonGameStart::enterEvent(QEvent *e)
 {
     //按键闪烁
     setFont(QFont("华文新魏",29));
+    CGameSystem::m_gameSound->gameMouseMoveToChoiceSoundPlay(true);
 }
 
 //重写鼠标移出事件

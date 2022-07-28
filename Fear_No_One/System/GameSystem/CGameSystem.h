@@ -13,12 +13,14 @@
 #include "Character.h"
 #include "Ground.h"
 #include "Arms.h"
+#include "mygamesound.h"
 
 
 class CArm;
 class Ground;
 class Character;
 class CGround_Map;
+class MyGameSound;
 
 
 
@@ -80,6 +82,8 @@ public:
     static int save02check;//2存档的进度
     static int save03check;//3存档的进度
 
+    static MyGameSound* m_gameSound; //游戏音效播放器
+
 public:
     //游戏运行过程中的
     static int using_peoid;//当前选中的人物
@@ -91,6 +95,4 @@ public:
     static void change_using_peoid(int x);
     static void change_using_arm(CArm* Armnow);
     static void change_exchange_peoids(int peoid1, int peoid2);
-
-
 };

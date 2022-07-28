@@ -10,10 +10,11 @@ bool GameMap::m_armListEnable             =0;
 bool GameMap::m_armInfoEnable             =0;
 bool GameMap::m_tufeiListEnable           =0;
 bool GameMap::m_attackReadyInfoEnable     =0;
-bool GameMap::m_changePeopleListEnable    =0;
 bool GameMap::m_gethithpEnable            =0;
 bool GameMap::m_echangePeopleListEnable   =0;
 bool GameMap::m_echangeArmListEnable      =0;
+bool GameMap::m_shangyaoEnable            =0;
+
 GameMap::GameMap(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GameMap),
@@ -28,7 +29,8 @@ GameMap::GameMap(QWidget *parent) :
     m_echangeArmList1(NULL),
     m_echangeArmList2(NULL),
     timer(nullptr),
-    TimeId(0)
+    TimeId(0),
+    m_shangyao(NULL)
 {
     ui->setupUi(this);
     setFocusPolicy(Qt::StrongFocus);
@@ -95,17 +97,18 @@ GameMap::GameMap(QWidget *parent) :
                      this,
                      SLOT(slot_changePeopleArmShow(int,int)));
 
+    m_shangyao = new ShangYao(this);
+    QObject::connect(m_shangyao,
+                     SIGNAL(SIG_useShangYao(bool)),
+                     this,
+                     SLOT(slot_useShangYao(bool)));
+
     timer = new QTimer(this);
     QObject::connect(timer,
                      SIGNAL(timeout()),
                      this,
                      SLOT(slot_timeadd()));
     timer->start(250);//开始运行
-
-    QObject::connect(m_echangeArmList2,
-                     SIGNAL(SIG_changePeopleArmShow(int,int)),
-                     this,
-                     SLOT(slot_changePeopleArmShow(int,int)));
 
     //控件处理
     m_peopleHpInfo->setGeometry(700,0,200,80);
@@ -145,10 +148,13 @@ GameMap::GameMap(QWidget *parent) :
     m_echangeArmList1->setGeometry(0,0,m_echangeArmList1->width(), m_echangeArmList1->height());
     m_echangeArmList2->setGeometry(580,0,m_echangeArmList2->width(), m_echangeArmList2->height());
 
+    m_shangyao->hide();
+    m_shangyaoEnable = false;
+    m_shangyao->setGeometry(320,0, m_shangyao->width(), m_shangyao->height());
+
     //鼠标捕获
     setMouseTracking(true);
     //开启时间片
-
 }
 
 GameMap::~GameMap()
@@ -210,7 +216,11 @@ GameMap::~GameMap()
         delete m_echangeArmList2;
         m_echangeArmList2 = NULL;
     }
-
+    if(m_shangyao)
+    {
+        delete m_shangyao;
+        m_shangyao = NULL;
+    }
 }
 
 //时间片运行
@@ -412,11 +422,6 @@ void GameMap::drawPixmap(QPainter *painter){
         m_gethithp->hide();
     }
 
-//    if(GameMap::m_changePeopleListEnable){//行动链表 -> 交换的人物选择??
-//        m_changePeopleList->show();
-//    }else{
-//        m_changePeopleList->hide();
-//    }
     if(GameMap::m_echangePeopleListEnable){//行动链表  -> 交换的人物选择??
         m_echangePeopleList->show();
     }else{
@@ -434,6 +439,13 @@ void GameMap::drawPixmap(QPainter *painter){
 //    }else{
 //        m_actionList->hide();
 //    }
+
+    if(GameMap::m_shangyaoEnable){
+        m_shangyao->show();
+    }else{
+        m_shangyao->hide();
+    }
+
 
 
     painter->restore();
@@ -522,6 +534,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                         CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY++;
                     CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = CGameSystem::using_peoid;
                     updateMap();
+                    CGameSystem::m_gameSound->gamePeopleMovePlay(true); //人物移动音效
                     break;
                  case Qt::Key_S:
                     qDebug("The key you Pressed is : ↓ \n");
@@ -531,6 +544,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                         CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY--;
                     CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = CGameSystem::using_peoid;
                     updateMap();
+                    CGameSystem::m_gameSound->gamePeopleMovePlay(true); //人物移动音效
                     break;
                  case Qt::Key_A:
                     qDebug("The key you Pressed is : ← \n");
@@ -540,6 +554,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                         CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX--;
                     CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = CGameSystem::using_peoid;
                     updateMap();
+                    CGameSystem::m_gameSound->gamePeopleMovePlay(true); //人物移动音效
                     break;
                  case Qt::Key_D:
                     qDebug("The key you Pressed is : → \n");
@@ -549,6 +564,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                         CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX++;
                     CGameSystem::CGround_Map_Info[CGameSystem::Checkpoint-1]->m_Peopleid[CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowX][CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_NowY] = CGameSystem::using_peoid;
                     updateMap();
+                    CGameSystem::m_gameSound->gamePeopleMovePlay(true); //人物移动音效
                     break;
                  //case Qt::Key_Enter:{//数字键盘回车键
                    case Qt::Key_Return:{//字母键盘回车键
@@ -601,33 +617,49 @@ void GameMap::keyPressEvent(QKeyEvent *event){
         if(op == Qt::Key_Escape)
         {
             //控件显示和隐藏控制
-            if(m_attackReadyInfoEnable)
+            if(m_actionListEnable) //动作 回退
+            {
+                m_actionListEnable = false;
+            }
+
+            if(m_armListEnable && m_armInfoEnable) //动作攻击->武器列表，武器信息 的回退
+            {
+                m_armListEnable = false;
+                m_armInfoEnable = false;
+                m_actionListEnable = true;
+            }
+
+            if(m_tufeiListEnable) //武器列表，武器信息->土匪列表 的回退
+            {
+                m_tufeiListEnable = false;
+                m_armListEnable = true;
+                m_armInfoEnable = true;
+            }
+
+            if(m_attackReadyInfoEnable) //土匪列表->战斗信息 的回退
             {
                 m_attackReadyInfoEnable = false;
+                m_tufeiListEnable = true;
             }
-            else
+
+            if(m_shangyaoEnable)//动作物品->伤药 的回退
             {
-                if(m_tufeiListEnable)
-                {
-                    m_tufeiListEnable = false;
-                }
-                else
-                {
-                    if(m_armListEnable)
-                    {
-                        m_armListEnable = false;
-                        m_armInfoEnable = false;
-                        m_actionListEnable = true;
-                    }
-                    else
-                    {
-                        if(m_actionListEnable)
-                        {
-                            m_actionListEnable = false;
-                        }
-                    }
-                }
+                m_shangyaoEnable = false;
+                m_actionListEnable = true;
             }
+
+            if(m_echangePeopleListEnable) //动作交换->交换人物列表  的回退
+            {
+                m_echangePeopleListEnable = false;
+                m_actionListEnable = true;
+            }
+
+            if(m_echangeArmListEnable) // 交换人物列表->交换武器列表 的回退
+            {
+                m_echangeArmListEnable = false;
+                m_echangePeopleListEnable = true;
+            }
+
             updateMap();
         }
      }
@@ -644,7 +676,6 @@ void GameMap::actionListShow()
     m_armInfoEnable = false;
     m_attackReadyInfoEnable = false;
     m_tufeiListEnable = false;
-    m_changePeopleListEnable = false;
     m_echangeArmListEnable = false;
     m_echangePeopleListEnable = false;
 
@@ -744,10 +775,10 @@ void GameMap::slot_action(QString actionName)
         //2.从武器链表中获取武器信息
         for(auto ite = UsedtoATK.begin(); ite != UsedtoATK.end(); ite++)
         {
-                        ArmListItem* armItem = new ArmListItem;
-                        armItem->pArm = (*ite);//把指针存到ArmListItem里面;
-                        armItem->setInfo();
-                        m_armList->addItem(armItem);
+            ArmListItem* armItem = new ArmListItem;
+            armItem->pArm = (*ite);//把指针存到ArmListItem里面;
+            armItem->setInfo();
+            m_armList->addItem(armItem);
         }
         //2.显示
         m_armList->createList();
@@ -755,10 +786,26 @@ void GameMap::slot_action(QString actionName)
     }
     else if(!strcmp(actionName.toStdString().c_str(), "交互"))
     {
-        ;
+//        //获取当前人物信息
+//        //1.获取人物信息
+//        int peoid = CGameSystem::using_peoid;
+//        Character *character = CGameSystem::Character_Info[peoid-1];
+//        //获取当前人物x，y坐标
+//        int x = character->m_NowX;
+//        int y = character->m_NowY;
+//        //获取关卡id
+//        int guangkaid = CGameSystem::Checkpoint-1;
+
+//        int id = CGameSystem::Able_UsedtoGroundFun(guangkaid,x,y);
+//        CGameSystem::side_story_used(id);
     }
     else if(!strcmp(actionName.toStdString().c_str(), "交换"))
     {
+        //隐藏行动列表
+        m_actionListEnable = false;
+        m_echangePeopleListEnable = false;
+        m_echangeArmListEnable = false;
+
         //1.获取可以与当前角色交换武器的人物id列表
         int id = CGameSystem::using_peoid;
         std::list<int> UsedtoExchange = CGameSystem::Able_UsedtoExchange(id);
@@ -797,12 +844,9 @@ void GameMap::slot_armChoice(CArm *Armnow)
     qDebug()<<"slot: "<<QString::fromStdString(Armnow->m_name );
     CGameSystem::change_using_arm(Armnow);
 
-//    if(!strcmp(armName.toStdString().c_str(), "伤药"))
-//    {
-//        ;//使用伤药治疗角色
-//    }
-    if(Armnow->m_Id == 5){
-          ;//使用伤药治疗角色
+    //伤药
+    if(Armnow->m_Id == _DEF_CArm_BASE + 5){
+         m_shangyaoEnable = true;
     }
     else
     {
@@ -836,17 +880,26 @@ void GameMap::slot_attackReadyInfoShow(int blueId,CArm* arm, int redId)//第二�
     m_attackReadyInfoEnable = true;
 }
 
+//伤药使用槽函数
+void GameMap::slot_useShangYao(bool yes)
+{
+    Tool_Info* toolInfo = new Tool_Info;
+    if(yes)
+    {
+        //hp增加
+        toolInfo->showinfo("使用成功，Hp恢复1点");
+    }
+
+    m_shangyaoEnable = false;
+}
+
 
 
 
 //双方角色可交换的武器信息显示槽函数
 void GameMap::slot_changePeopleArmShow(int peoid1, int peoid2)
 {
-    qDebug()<<"bbbbbbbbbbbbbbbbbbbbbbb";
-    m_actionList->hide();
     m_actionListEnable = false;
-
-    m_echangePeopleList->hide();
     m_echangePeopleListEnable = false;
 
     m_echangeArmList1->deleteItemList();
@@ -854,7 +907,5 @@ void GameMap::slot_changePeopleArmShow(int peoid1, int peoid2)
 
     m_echangeArmList1->setInfo(peoid1);
     m_echangeArmList2->setInfo(peoid2);
-    m_echangeArmList1->show();
-    m_echangeArmList2->show();
     m_echangeArmListEnable = true;
 }

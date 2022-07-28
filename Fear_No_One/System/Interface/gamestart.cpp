@@ -7,6 +7,8 @@ GameStart::GameStart(QWidget *parent) :
     ui(new Ui::GameStart)
 {
     ui->setupUi(this);
+
+    CGameSystem::m_gameSound->gameStartSoudPlay(true); //开始界面音乐播放
 }
 
 GameStart::~GameStart()
@@ -17,6 +19,8 @@ GameStart::~GameStart()
 //点击开始按钮，跳转到下一界面
 void GameStart::on_pb_gameStart_clicked()
 {
+    //播放点击音效
+    CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
     Q_EMIT SIG_jumpWidget(2);
 }
 

@@ -13,6 +13,8 @@ int CGameSystem::SaveSelect = 0;
 bool CGameSystem::WoFangXingDong = 0;
 int CGameSystem::EnemyNum=0x3f3f3f3f;
 
+MyGameSound* CGameSystem::m_gameSound = NULL;
+
 int CGameSystem::save01check =0; //标记着存档1在第几关
 int CGameSystem::save02check =0;
 int CGameSystem::save03check =0;
@@ -55,6 +57,9 @@ void CGameSystem::InitGame(){//初始化
 	CGameSystem::point_funid[_DEF_GET_POINTTOSIDE(1,14,4)] = 3;
 	CGameSystem::point_funid[_DEF_GET_POINTTOSIDE(1,11,6)] = 4;
 	CGameSystem::point_funid[_DEF_GET_POINTTOSIDE(1,15,10)] = 6;
+
+    //创建音效播放器
+    CGameSystem::m_gameSound = new MyGameSound; //游戏结束时记得delete
 }
 
 

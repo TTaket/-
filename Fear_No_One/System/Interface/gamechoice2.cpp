@@ -60,32 +60,40 @@ void GameChoice2::drawPixmap(QPainter *painter){
 //选择存档1
 void GameChoice2::slot_pb_save1()
 {
-    //Q_EMIT SIG_jumpWidget(4);
+    CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
+    CGameSystem::m_gameSound->gameStartSoudPlay(false);
     CGameSystem::DuSave(1);
     CGameSystem::Make_The_Scene(CGameSystem::Checkpoint);
     Q_EMIT SIG_jumpWidget(4);
+    //播放背景音乐
+    CGameSystem::m_gameSound->gameMapBgmPlay(true);
 };
 
 
 //选择存档2
 void GameChoice2::slot_pb_save2()
 {
-    Q_EMIT SIG_jumpWidget(4);
+    CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
+    CGameSystem::m_gameSound->gameStartSoudPlay(false);
     //CGameSystem::DuSave(1);
     CGameSystem::Make_The_Scene(CGameSystem::Checkpoint);
+    Q_EMIT SIG_jumpWidget(4);
 };
 
 //选择存档3
 void GameChoice2::slot_pb_save3()
 {
-    Q_EMIT SIG_jumpWidget(4);
+    CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
+    CGameSystem::m_gameSound->gameStartSoudPlay(false);
     //CGameSystem::DuSave(1);
     CGameSystem::Make_The_Scene(CGameSystem::Checkpoint);
+    Q_EMIT SIG_jumpWidget(4);
 }
 
 //返回上一页
 void GameChoice2::slot_pb_return()
 {
+    CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
     Q_EMIT SIG_jumpWidget(2);
 };
 

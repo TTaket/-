@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <Qpainter>
 #include <CGameSystem.h>
+#include "CGameSystem.h"
+
 namespace Ui {
 class GameChoice2;
 }
