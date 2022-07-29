@@ -127,7 +127,7 @@ struct Fightinfo{
             int color;
             int step;
             bool operator< (const MoveInfo&that){
-                return step > that.step;
+                return step < that.step;
             }
         };
 
@@ -195,14 +195,14 @@ struct Fightinfo{
         m_MappicPos[2][1][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/06.png";\
         m_MappicPos[2][2][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/09.png";\
         m_MappicPos[2][3][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/10.png";\
-        m_MappicPos[3][0][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/70.png";\
-        m_MappicPos[3][1][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/71.png";\
-        m_MappicPos[3][2][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/72.png";\
-        m_MappicPos[3][3][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/73.png";\
-        m_MappicPos[4][0][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/34.png";\
-        m_MappicPos[4][1][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/36.png";\
-        m_MappicPos[4][2][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/38.png";\
-        m_MappicPos[4][3][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/40.png";\
+        m_MappicPos[4][0][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/70.png";\
+        m_MappicPos[4][1][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/71.png";\
+        m_MappicPos[4][2][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/72.png";\
+        m_MappicPos[4][3][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/73.png";\
+        m_MappicPos[3][0][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/34.png";\
+        m_MappicPos[3][1][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/36.png";\
+        m_MappicPos[3][2][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/38.png";\
+        m_MappicPos[3][3][0] = "../Fear_No_One/Resource/Character/Map_basic/shanzei_Mask/40.png";\
         m_MappicPos[0][0][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/15.png";\
         m_MappicPos[0][1][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/12.png";\
         m_MappicPos[0][2][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/17.png";\
@@ -217,14 +217,14 @@ struct Fightinfo{
         m_MappicPos[2][1][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/06.png";\
         m_MappicPos[2][2][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/09.png";\
         m_MappicPos[2][3][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/10.png";\
-        m_MappicPos[3][0][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/70.png";\
-        m_MappicPos[3][1][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/71.png";\
-        m_MappicPos[3][2][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/72.png";\
-        m_MappicPos[3][3][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/73.png";\
-        m_MappicPos[4][0][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/34.png";\
-        m_MappicPos[4][1][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/36.png";\
-        m_MappicPos[4][2][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/38.png";\
-        m_MappicPos[4][3][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/40.png";
+        m_MappicPos[4][0][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/70.png";\
+        m_MappicPos[4][1][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/71.png";\
+        m_MappicPos[4][2][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/72.png";\
+        m_MappicPos[4][3][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/73.png";\
+        m_MappicPos[3][0][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/34.png";\
+        m_MappicPos[3][1][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/36.png";\
+        m_MappicPos[3][2][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/38.png";\
+        m_MappicPos[3][3][1] = "../Fear_No_One/Resource/Character/Map_basic/shanzei/40.png";
 
 
 

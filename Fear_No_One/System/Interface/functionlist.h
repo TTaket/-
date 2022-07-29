@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <CGameSystem.h>
 #include "duiwu.h"
+#include "gamemap.h"
 
 namespace Ui {
 class Functionlist;

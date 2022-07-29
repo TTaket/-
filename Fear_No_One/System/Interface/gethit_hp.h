@@ -35,12 +35,12 @@ public:
     gethit_exp* m_gethit_exp;
 
 public:
-    void setInfo(Fightinfo* Finfo);
+    void setInfo(Fightinfo* Finfo,CArm* arm1,CArm* arm2);
     void Init_ui();
     void st_Fight();
 
 public slots:
-    void slot_Fightinfo(Fightinfo* Finfo);
+    void slot_Fightinfo(Fightinfo* Finfo ,CArm* arm1 ,CArm* arm2);
 
 private:
     Ui::gethit_hp *ui;

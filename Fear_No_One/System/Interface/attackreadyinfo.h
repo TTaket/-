@@ -20,7 +20,7 @@ public:
     void setInfo(int blueId,CArm* Armnow, int redId);
 
 signals:
-    void SIG_Fightinfo(Fightinfo*);
+    void SIG_Fightinfo(Fightinfo*,CArm*,CArm*);
 private slots:
     void on_lb_startZhandou_clicked();
 

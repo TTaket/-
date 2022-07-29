@@ -37,6 +37,7 @@ class gethit_hp;
 class gethit_exp;
 class ArmInfo;
 class ArmList;
+class Functionlist;
 
 namespace Ui {
 class GameMap;

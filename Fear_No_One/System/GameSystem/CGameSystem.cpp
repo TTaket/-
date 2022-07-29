@@ -76,7 +76,7 @@ void CGameSystem::OverGame(){
 
 Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方武器， 敌方
     Fightinfo* finfo = new Fightinfo;
-    CArm *CArm2 = CGameSystem::Character_Info[y1-1]->m_Zhuangbei;//土匪
+    CArm *CArm2 = CGameSystem::Character_Info[y1-1]->m_Zhuangbei;
 	//影响因素：
 	//攻击方人物 ： 力量 、 技巧 、熟练度 、 速度、 幸运；
 	//攻击方武器 ： 攻击力 、 命中； 
@@ -206,7 +206,8 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 		ATKtime = 1;
 	}
     finfo->ATKtime = ATKtime;
-	int Hit = CGameSystem::Character_Info[x1-1]->m_Attributes.Gongjili*CArm1->m_ATK/20 *shouliandu_jiacheng/100 -  CGameSystem::Character_Info[y1-1]->m_Attributes.Hujia;
+    int Hit = (double)CGameSystem::Character_Info[x1-1]->m_Attributes.Gongjili*CArm1->m_ATK/20.0 *(double)shouliandu_jiacheng/100 -  CGameSystem::Character_Info[y1-1]->m_Attributes.Hujia;
+    Hit = std::max(Hit,5);
 	int Baoji = CGameSystem::Character_Info[x1-1]->m_Attributes.Xingyun + CGameSystem::Character_Info[x1-1]->m_Attributes.Jiqiao +10;
 	int Mingzhong = CArm1->m_Mingzhong + CGameSystem::Character_Info[x1-1]->m_Attributes.Xingyun - CGameSystem::Character_Info[y1-1]->m_Attributes.Xingyun - CArm2->m_Shanbi;
 	int	Add_Exp = 0;
@@ -275,7 +276,7 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 		}
 	}
 	if(CGameSystem::Character_Info[x1-1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei){//土匪没有加成
-        return nullptr;
+        return finfo;
 	}
 	//经验值加成；
     finfo->Base_Exp = CGameSystem::Character_Info[x1-1]->m_Attributes.m_Exp;

@@ -85,5 +85,5 @@ void AttackReadyInfo::on_lb_startZhandou_clicked()
     GameMap::m_armInfoEnable = 0;
     GameMap::m_tufeiListEnable = 0;
     GameMap::m_attackReadyInfoEnable = 0;
-    Q_EMIT SIG_Fightinfo(finfo);
+    Q_EMIT SIG_Fightinfo(finfo,CGameSystem::using_arm ,redArm);
 }

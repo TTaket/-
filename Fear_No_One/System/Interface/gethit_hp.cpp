@@ -37,12 +37,12 @@ gethit_hp::~gethit_hp()
 }
 
 
-void gethit_hp::setInfo(Fightinfo* Finfo){
+void gethit_hp::setInfo(Fightinfo* Finfo,CArm*arm1,CArm*arm2){
     finfo = Finfo;
     blueid = Finfo->id1;
     redid = Finfo->id2;
-    Arm1 = CGameSystem::using_arm;
-    Arm2 = CGameSystem::Character_Info[redid-1]->m_Zhuangbei;
+    Arm1 = arm1;
+    Arm2 = arm2;
     ground_id = Finfo->Groundid;
 
 }
@@ -199,9 +199,9 @@ void gethit_hp::st_Fight(){
 }
 
 
-void gethit_hp::slot_Fightinfo(Fightinfo* Finfo){
+void gethit_hp::slot_Fightinfo(Fightinfo* Finfo,CArm* arm1 ,CArm* arm2){
     GameMap::m_gethithpEnable = 0;
-    setInfo(Finfo);
+    setInfo(Finfo,arm1,arm2);
     Init_ui();
     st_Fight();
 }
