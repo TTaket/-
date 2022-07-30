@@ -79,11 +79,11 @@ public:
 
 
 #define CArm_3_Init \
-	m_IsATK = 1;\
+    m_IsATK = 1;\
 	m_Juli = 1;\
 	m_name = "板斧";\
 	m_Maxusetime = 45;\
-	m_ATK = 35;\
+    m_ATK = 45;\
 	m_Shanbi = 5;\
 	m_Mingzhong = 80;\
 	m_WuqiZhonglei = _DEF_CArm_Fu;\

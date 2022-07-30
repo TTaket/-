@@ -12,7 +12,7 @@ public:
     int m_Id;//地图id
     int m_MapXmax;//地图最大x
     int m_MapYmax;//地图最大y
-    bool m_IsSeeable[_DEF_MAP_MAX][_DEF_MAP_MAX];//是否可视
+    bool m_IsSeeable[_DEF_MAP_MAX][_DEF_MAP_MAX]; //是否可视
     int m_Groundid[_DEF_MAP_MAX][_DEF_MAP_MAX];  //地皮id
     int m_Peopleid[_DEF_MAP_MAX][_DEF_MAP_MAX];  //人id
     int m_Color[_DEF_MAP_MAX][_DEF_MAP_MAX];//颜色;
