@@ -14,7 +14,6 @@ bool CGameSystem::WoFangXingDong = 0;
 int CGameSystem::EnemyNum=0x3f3f3f3f;
 
 MyGameSound* CGameSystem::m_gameSound = NULL;
-Tool_Info* CGameSystem::m_tool_info = NULL;
 
 int CGameSystem::save01check =0; //标记着存档1在第几关
 int CGameSystem::save02check =0;
@@ -26,44 +25,12 @@ int CGameSystem::Mouse_X =0;//当前鼠标X坐标
 int CGameSystem::Mouse_Y =0;//当前鼠标y坐标
 
 bool CGameSystem::gameOverFlag = false;
-bool CGameSystem::gameSuccessFlag = false;
 
 CArm* CGameSystem::using_arm = nullptr;
 int CGameSystem::exchangePeoid1 =0; //用于保存交换武器的两个人物id
 int CGameSystem::exchangePeoid2 =0;
 
 void CGameSystem::InitGame(){//初始化
-    Character_Info.clear();
-    CGround_Map_Info.clear();
-    Ground_Info.clear();
-    side_story_used.clear();
-    point_funid.clear();
-    Money = 0;
-    Checkpoint = 0;
-    GAME_NEXT =0;
-    SaveSelect = 0;
-    WoFangXingDong = 0;
-    EnemyNum=0x3f3f3f3f;
-
-    m_gameSound = NULL;
-    m_tool_info = NULL;
-
-    save01check =0; //标记着存档1在第几关
-    save02check =0;
-    save03check =0;
-    Sys_Window_Height = 0;
-    Sys_Window_width = 0;
-    using_peoid =0;
-    Mouse_X =0;//当前鼠标X坐标
-    Mouse_Y =0;//当前鼠标y坐标
-
-    gameOverFlag = false;
-    gameSuccessFlag = false;
-
-    using_arm = nullptr;
-    exchangePeoid1 =0; //用于保存交换武器的两个人物id
-    exchangePeoid2 =0;
-
 	//地图部分
     Sys_Window_Height = 600;
     Sys_Window_width = 900;
@@ -95,7 +62,6 @@ void CGameSystem::InitGame(){//初始化
 
     //创建音效播放器
     CGameSystem::m_gameSound = new MyGameSound; //游戏结束时记得delete
-    CGameSystem::m_tool_info = new Tool_Info;//新建信息窗口
 }
 
 
@@ -106,29 +72,13 @@ void CGameSystem::OverGame(){
 	Over_VectorDelete(Character);
 	//地皮部分
 	Over_VectorDelete(Ground);
-
-    if(m_gameSound)
-    {
-        delete m_gameSound;
-        m_gameSound = NULL;
-    }
-    if(m_tool_info)
-    {
-        delete m_tool_info;
-        m_tool_info = NULL;
-    }
-    if(using_arm)
-    {
-        delete using_arm;
-        using_arm = NULL;
-    }
 }
 
 
 
 Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方武器， 敌方
     Fightinfo* finfo = new Fightinfo;
-    CArm *CArm2 = CGameSystem::Character_Info[y1-1]->m_Zhuangbei;
+    CArm *CArm2 = CGameSystem::Character_Info[y1-1]->m_Zhuangbei;//土匪
 	//影响因素：
 	//攻击方人物 ： 力量 、 技巧 、熟练度 、 速度、 幸运；
 	//攻击方武器 ： 攻击力 、 命中； 
@@ -144,8 +94,6 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 
 	srand(0);
 	double shouliandu_jiacheng=0;
-
-    bool zhujueDie = false;
 
 	CGameSystem::Character_Info[x1-1]->m_Zhuangbei->Is_Nowzhuangbei = 0;
 	CGameSystem::Character_Info[x1-1]->m_Zhuangbei = CArm1;
@@ -260,8 +208,7 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 		ATKtime = 1;
 	}
     finfo->ATKtime = ATKtime;
-    int Hit = (double)CGameSystem::Character_Info[x1-1]->m_Attributes.Gongjili*CArm1->m_ATK/20.0 *(double)shouliandu_jiacheng/100 -  CGameSystem::Character_Info[y1-1]->m_Attributes.Hujia;
-    Hit = std::max(Hit,5);
+	int Hit = CGameSystem::Character_Info[x1-1]->m_Attributes.Gongjili*CArm1->m_ATK/20 *shouliandu_jiacheng/100 -  CGameSystem::Character_Info[y1-1]->m_Attributes.Hujia;
 	int Baoji = CGameSystem::Character_Info[x1-1]->m_Attributes.Xingyun + CGameSystem::Character_Info[x1-1]->m_Attributes.Jiqiao +10;
 	int Mingzhong = CArm1->m_Mingzhong + CGameSystem::Character_Info[x1-1]->m_Attributes.Xingyun - CGameSystem::Character_Info[y1-1]->m_Attributes.Xingyun - CArm2->m_Shanbi;
 	int	Add_Exp = 0;
@@ -284,9 +231,8 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
             finfo->Add_Exp =finfo->Add_Exp +45;
 			Add_Exp += 45;
             if(!CGameSystem::Character_Info[y1-1]->LostHp((int)(Hit*1.5))){//如果死亡 武器熟练度标记为1 跳出；
-				if(y1 == 1){
-                    zhujueDie = true;
-                    CGameSystem::The_Hero_Dies();//主角死亡;
+                if(y1 == 1){
+                    CGameSystem::The_();//主角死亡;
 				}
                 finfo->is_die = 1;
 				Add_shouliandu = 1;
@@ -309,7 +255,6 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 			//信号普通动作 伤害值
                 if(!CGameSystem::Character_Info[y1-1]->LostHp(Hit)){//如果死亡 武器熟练度标记为1 跳出；
 					if(y1 == 1){
-                        zhujueDie = true;
 						CGameSystem::The_Hero_Dies();
 					}
                     finfo->is_die = 1;
@@ -332,7 +277,7 @@ Fightinfo* CGameSystem::GetHit(int x1 , CArm *CArm1 ,int y1){ //我方， 我方
 		}
 	}
 	if(CGameSystem::Character_Info[x1-1]->m_Attributes.m_Job == _DEF_Character_Job_TuFei){//土匪没有加成
-        return finfo;
+        return nullptr;
 	}
 	//经验值加成；
     finfo->Base_Exp = CGameSystem::Character_Info[x1-1]->m_Attributes.m_Exp;
@@ -381,7 +326,6 @@ void CGameSystem::Side_story(int id){
 	switch (id)
 	{
 		case 1:{/*支线剧情1要塞 全员生命值10点*/
-                m_tool_info->showinfo("全员生命值回复10点");
 				for(auto it = CGameSystem::Character_Info.begin();it!=CGameSystem::Character_Info.end();it++){
 					if(!(*it)->m_Islive){
 						continue;
@@ -393,7 +337,6 @@ void CGameSystem::Side_story(int id){
 			   }
 			break;
 		case 2:{/*支线剧情2要塞 全员生命值10点*/
-                m_tool_info->showinfo("全员生命值回复10点");
 			   for(auto it = CGameSystem::Character_Info.begin();it!=CGameSystem::Character_Info.end();it++){
 					if(!(*it)->m_Islive){
 						continue;
@@ -406,27 +349,20 @@ void CGameSystem::Side_story(int id){
 			break;
 		case 3:{/*支线剧情3村庄 获得 药水*3*/
 			   //对话
-                m_tool_info->showinfo("主人公 获得药水*3");
-                CGameSystem::Character_Info[0]->Additem (5,3);
+				CGameSystem::Character_Info[1]->Additem (5,6);
 				//界面提醒
 			   }
 			break;
 		case 4:{/*支线剧情4村庄 获得金币 3000*/
 				//对话	
-                m_tool_info->showinfo("获得3000元");
 				CGameSystem::Money+=3000;
 				//界面提醒
 			   }
 			break;
 		case 5:{/*支线剧情5王座 关卡一胜利条件*/
-                if(CGameSystem::Character_Info[0]->m_NowX == _DEF_CHECKPOINT1_X && CGameSystem::Character_Info[0]->m_NowY == _DEF_CHECKPOINT1_Y){
+				if(CGameSystem::Character_Info[1]->m_NowX == _DEF_CHECKPOINT1_X && CGameSystem::Character_Info[1]->m_NowY == _DEF_CHECKPOINT1_Y){
 					//弹出对话 
-                    //CGameSystem::GAME_NEXT = 1;
-                    Tool_Info* toolinfo = new Tool_Info;
-                    toolinfo->showinfo("游戏胜利！！！！");
-                    delete toolinfo;
-                    toolinfo = NULL;
-                    CGameSystem::gameSuccessFlag = true;
+					CGameSystem::GAME_NEXT = 1;
 				}else{
 					std::cout << "需要罗伊(主人公)到达该位置" << std::endl; 
 				}
@@ -434,8 +370,7 @@ void CGameSystem::Side_story(int id){
 			break;
 		case 6:{/*支线剧情6菜单 获得隐藏物品 */
 				//弹出对话 
-                m_tool_info->showinfo("获得隐藏物品");
-                CGameSystem::Character_Info[0]->Additem (8,1);
+				CGameSystem::Character_Info[1]->Additem (8,1);
 				
 			   }
 			break;
@@ -451,7 +386,7 @@ void CGameSystem::Thing_Fun(int Character_id , CArm* CArm){
 	{
 		case 1:{//伤药
 				CArm->m_Num--;
-                CGameSystem::Character_Info[Character_id-1]->AddHp(25);
+				CGameSystem::Character_Info[Character_id-1]->AddHp(CArm->m_ATK);
 				}
 			   std::cout<<"物品使用成功！" <<std::endl;
 			break;
@@ -474,7 +409,7 @@ void CGameSystem::The_Hero_Dies(){
 	//对话
 	//弹出界面 -- 设置需要回应 --强制结束；
 	//结束游戏//TODO:回收
-    //gameOverFlag = true;
+    gameOverFlag = true;
 };
 
 
@@ -844,7 +779,7 @@ void CGameSystem::Arm_exchange(int peoid,CArm* CArm,int aimid){
 int CGameSystem::Able_UsedtoGroundFun(int guankaid,int x,int y){
     int id = 0;
     int check = _DEF_GET_POINTTOSIDE(guankaid,x,y);
-    if(CGameSystem::point_funid.find(check)!=CGameSystem::point_funid.end()){
+    if(!(CGameSystem::point_funid.find(check)!=CGameSystem::point_funid.end())){
         id = CGameSystem::point_funid[check];
     }
     if(id!=0 && !CGameSystem::side_story_used[id]){

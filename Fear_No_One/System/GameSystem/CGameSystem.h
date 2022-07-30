@@ -10,6 +10,7 @@
 #include <windows.h>
 
 #include "Map.h"
+#include "tool_info.h"
 #include "packdef.h"
 #include "Character.h"
 #include "Ground.h"
@@ -82,6 +83,8 @@ public:
     static int save03check;//3存档的进度
 
     static MyGameSound* m_gameSound; //游戏音效播放器
+    static Tool_Info* m_tool_info; //信息窗口
+
 
 public:
     //游戏运行过程中的
@@ -94,4 +97,6 @@ public:
     static void change_using_peoid(int x);
     static void change_using_arm(CArm* Armnow);
     static void change_exchange_peoids(int peoid1, int peoid2);
+    static bool gameOverFlag;
+    static bool gameSuccessFlag;
 };

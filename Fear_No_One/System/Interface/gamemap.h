@@ -28,6 +28,7 @@
 #include "echangearmlist.h"
 #include "shangyao.h"
 #include "functionlist.h"
+#include "soundopenclose.h"
 #include "tool_info.h"
 
 
@@ -84,8 +85,14 @@ private slots:
     void on_pb_ShowFunction_clicked();
     //红色行动
     void RedWork();//ai人机行动//TODO:
-
-
+    //音效开启和关闭选项
+    void slot_setSoundOpenCloseChoice();
+    //音效开启
+    void slot_soundOpen();
+    //音效关闭
+    void slot_soundClose();
+    //跳转回游戏开始界面
+    void slot_jumpToGameStart();
 
 private:
     Ui::GameMap *ui;
@@ -111,7 +118,10 @@ private:
 
 
     ShangYao* m_shangyao;
+
     Functionlist* m_Functionlist;
+    SoundOpenClose* m_soundOpenCLose;
+
 public:
     //这些用来标记控件是否显示，在按下ESC按键时需要用到
     static bool m_actionListEnable;
@@ -124,6 +134,7 @@ public:
     static bool m_echangeArmListEnable;
     static bool m_shangyaoEnable;
     static bool m_FunctionlistEnable;
+    static bool m_soundOpenCLoseEnable;
 
 //绘制地图
 public:

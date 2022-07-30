@@ -62,7 +62,10 @@ SOURCES += \
     System/Interface/tufeilistitem.cpp \
     System/Interface/tufeilist.cpp \
     System/Interface/shangyao.cpp \
-    System/Interface/mygamesound.cpp
+    System/Interface/mygamesound.cpp \
+    System/Interface/soundopenclose.cpp \
+    System/Interface/gameover.cpp \
+    System/Interface/gamesuccess.cpp
 
 HEADERS += \
     Data/Arms/Arms.h \
@@ -99,7 +102,10 @@ HEADERS += \
     System/Interface/tufeilistitem.h \
     System/Interface/tufeilist.h \
     System/Interface/shangyao.h \
-    System/Interface/mygamesound.h
+    System/Interface/mygamesound.h \
+    System/Interface/soundopenclose.h \
+    System/Interface/gameover.h \
+    System/Interface/gamesuccess.h
 
 FORMS += \
     System/Interface/duiwu.ui \
@@ -127,4 +133,7 @@ FORMS += \
     System/Interface/tool_info.ui \
     System/Interface/tufeilistitem.ui \
     System/Interface/tufeilist.ui \
-    System/Interface/shangyao.ui
+    System/Interface/shangyao.ui \
+    System/Interface/soundopenclose.ui \
+    System/Interface/gameover.ui \
+    System/Interface/gamesuccess.ui

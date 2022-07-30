@@ -7,6 +7,8 @@ Duiwu::Duiwu(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->lb_duiwu->setAlignment(Qt::AlignCenter);
+
     ui->tw_duiwu->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tw_duiwu->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tw_duiwu->setColumnCount(10);

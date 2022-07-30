@@ -25,7 +25,14 @@ void ArmListItem::setInfo()//改为直接由指针 调用
     ui->lb_armName->setText(QString::fromStdString(pArm->m_name));
     ui->lb_armIcon->setText(QString::number(pArm->m_Id,10));//Iconid != id;
     ui->lb_armFinger->setText("");
-    ui->lb_armValue->setText(QString::number(pArm->m_Lastusetime,10));
+    if(pArm->m_Isthing)
+    {
+        ui->lb_armValue->setText(QString::number(pArm->m_Num,10));
+    }
+    else
+    {
+        ui->lb_armValue->setText(QString::number(pArm->m_Lastusetime,10));
+    }
 }
 
 //获取武器名字

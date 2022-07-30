@@ -275,11 +275,11 @@ std::list<CArm*> Character::Able_UsedtoThing(){
 void Character::Additem (int id,int Num){
 	bool ishave = 0;
 	for(auto it = Armslist.begin();it!=Armslist.end();it++){
-		if((*it)->m_Id == id){
+        if((*it)->m_Id == id + _DEF_CArm_BASE){
 			ishave = 1;
 			if((*it)->m_IsATK || (*it)->m_IsTreat){
 				Armslist.push_back( new CArm(id));
-			}else if((*it)->m_IsATK){
+            }else if((*it)->m_Isthing){
 				(*it)->CArm_AddNum(Num);
 			}
 			break;

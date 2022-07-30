@@ -11,6 +11,7 @@ gethit_exp::gethit_exp(QWidget *parent) :
     ui(new Ui::gethit_exp)
 {
     ui->setupUi(this);
+    setWindowTitle("经验值提升");
 }
 
 gethit_exp::~gethit_exp()

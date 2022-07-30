@@ -9,6 +9,8 @@
 #include "gamemap.h"
 #include "packdef.h"
 #include "CGameSystem.h"
+#include "gameover.h"
+#include "gamesuccess.h"
 
 namespace Ui {
 class Game;
@@ -32,6 +34,8 @@ private:
     GameChoice* m_gameChoice;
     GameChoice2* m_gameChoice2;
     GameMap* m_gameMap;
+    GameOver* m_gameOver;
+    GameSuccess* m_gameSuccess;
 
 //游戏的关闭
 public:

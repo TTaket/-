@@ -1,5 +1,5 @@
 #include "functionlist.h"
-#include "ui_function.h"
+#include "ui_functionlist.h"
 
 Functionlist::Functionlist(QWidget *parent) :
     QWidget(parent),
@@ -23,24 +23,27 @@ void Functionlist::on_pb_sound_clicked()
 {
     //静音
     GameMap::m_FunctionlistEnable = 0;
+    Q_EMIT SIG_oundOpenCloseChoice();
 }
 
 void Functionlist::on_pb_duiwu_clicked()
 {
+    GameMap::m_FunctionlistEnable = 0;
     m_duiwu->setInfo();
     m_duiwu->show();
-    GameMap::m_FunctionlistEnable = 0;
+
 }
 
 void Functionlist::on_pb_red_clicked()
 {
+    GameMap::m_FunctionlistEnable = 0;
     //红色方移动
     Q_EMIT ST_RedWork();
-    GameMap::m_FunctionlistEnable = 0;
+
 }
 
 void Functionlist::on_pb_overgame_clicked()
 {
-    //返回主菜单
     GameMap::m_FunctionlistEnable = 0;
+    Q_EMIT SIG_jumpToGameStart();//返回主菜单
 }

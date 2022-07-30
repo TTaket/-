@@ -10,6 +10,7 @@ gethit_hp::gethit_hp(QWidget *parent) :
     ui->setupUi(this);
     ui->te_fightinfo->setStyleSheet("background-color: rgb(255, 255, 255,60);");
 
+
     QTimer *CurrentTime = new QTimer(this);
     CurrentTime->start(1000);
     tinfo = new Tool_Info;
@@ -182,15 +183,17 @@ void gethit_hp::st_Fight(){
     QCoreApplication::processEvents();
     ui->te_fightinfo->update();
     Sleep(1500);//稍暂停
+
+    GameMap::m_gethithpEnable = 0;
+
     if(finfo->is_die){
         CGameSystem::Character_Info[finfo->id2-1]->m_Islive = 0;//设为死亡;
     }
 
-    GameMap::m_gethithpEnable = 0;
-    if(finfo->Add_Money>0){
+    if(finfo->Add_Money>0 && CGameSystem::Character_Info[finfo->id1-1]->m_Attributes.m_Job != _DEF_Character_Job_TuFei){
         tinfo->showinfo(QString("你获得了%1 个金币").arg(finfo->Add_Money*500));
     }
-    if(finfo->Add_shouliandu>0){
+    if(finfo->Add_shouliandu>0&& CGameSystem::Character_Info[finfo->id1-1]->m_Attributes.m_Job != _DEF_Character_Job_TuFei){
         tinfo->showinfo(QString("您的熟练度提升"));
     }
     //(int id ,int level1 , int Exp1 ,int addExp);

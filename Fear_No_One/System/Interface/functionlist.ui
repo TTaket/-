@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Functionlist</class>
- <widget class="QWidget" name="Function">
+ <widget class="QWidget" name="Functionlist">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -36,7 +36,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>队伍列表</string>
+    <string>角色列表</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pb_overgame">

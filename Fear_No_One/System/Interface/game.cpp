@@ -7,7 +7,8 @@ Game::Game(QWidget *parent) :
     ui(new Ui::Game),
     m_gameStart(NULL),
     m_gameChoice(NULL),
-    m_gameMap(NULL)
+    m_gameMap(NULL),
+    m_gameSuccess(NULL)
 {
     ui->setupUi(this);
     setWindowTitle("火焰纹章-Fear No One");
@@ -47,11 +48,27 @@ Game::Game(QWidget *parent) :
                      this,
                      SLOT(dealJumpWidget(int)));
 
+    //gameover界面
+    m_gameOver = new GameOver;
+    QObject::connect(m_gameOver,
+                     SIGNAL(SIG_jumpWidget(int)),
+                     this,
+                     SLOT(dealJumpWidget(int)));
+
+    //游戏胜利界面
+    m_gameSuccess = new GameSuccess;
+    QObject::connect(m_gameSuccess,
+                     SIGNAL(SIG_jumpWidget(int)),
+                     this,
+                     SLOT(dealJumpWidget(int)));
+
     //添加ui界面
     ui->sw_game->addWidget(m_gameStart);
     ui->sw_game->addWidget(m_gameChoice);
     ui->sw_game->addWidget(m_gameChoice2);
     ui->sw_game->addWidget(m_gameMap);
+    ui->sw_game->addWidget(m_gameOver);
+    ui->sw_game->addWidget(m_gameSuccess);
 
     ui->sw_game->setCurrentWidget(m_gameStart);
 }
@@ -79,6 +96,16 @@ Game::~Game()
     {
       delete m_gameMap;
       m_gameMap = NULL;
+    }
+    if(m_gameOver)
+    {
+        delete m_gameOver;
+        m_gameOver = NULL;
+    }
+    if(m_gameSuccess)
+    {
+        delete m_gameSuccess;
+        m_gameSuccess = NULL;
     }
 }
 

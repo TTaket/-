@@ -61,7 +61,7 @@ void GameChoice2::drawPixmap(QPainter *painter){
 void GameChoice2::slot_pb_save1()
 {
     CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
-    CGameSystem::m_gameSound->gameStartSoudPlay(false);
+    CGameSystem::m_gameSound->gameStartBgmPlay(false);
     CGameSystem::DuSave(1);
     CGameSystem::Make_The_Scene(CGameSystem::Checkpoint);
     Q_EMIT SIG_jumpWidget(4);
@@ -74,7 +74,7 @@ void GameChoice2::slot_pb_save1()
 void GameChoice2::slot_pb_save2()
 {
     CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
-    CGameSystem::m_gameSound->gameStartSoudPlay(false);
+    CGameSystem::m_gameSound->gameStartBgmPlay(false);
     //CGameSystem::DuSave(1);
     CGameSystem::Make_The_Scene(CGameSystem::Checkpoint);
     Q_EMIT SIG_jumpWidget(4);
@@ -84,7 +84,7 @@ void GameChoice2::slot_pb_save2()
 void GameChoice2::slot_pb_save3()
 {
     CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
-    CGameSystem::m_gameSound->gameStartSoudPlay(false);
+    CGameSystem::m_gameSound->gameStartBgmPlay(false);
     //CGameSystem::DuSave(1);
     CGameSystem::Make_The_Scene(CGameSystem::Checkpoint);
     Q_EMIT SIG_jumpWidget(4);

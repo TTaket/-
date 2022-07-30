@@ -3,6 +3,7 @@
 
 ShangYao::ShangYao(QWidget *parent) :
     QWidget(parent),
+    ArmNow(NULL),
     ui(new Ui::ShangYao)
 {
     ui->setupUi(this);

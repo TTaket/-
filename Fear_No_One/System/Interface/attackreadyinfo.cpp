@@ -41,15 +41,6 @@ void AttackReadyInfo::setInfo(int blueId,CArm* Armnow, int redId)
 
     //2.获取双方当前装备的武器
     //蓝方
-//    CArm* blueArm;
-//    //从武器链表中获取该武器信息
-//    for(auto ite = blueCharacter->Armslist.begin(); ite != blueCharacter->Armslist.end(); ite++)
-//    {
-//        if(!strcmp((*ite)->m_name.c_str(), CGameSystem::using_armName.c_str()))
-//        {
-//            blueArm = *ite;
-//        }
-//    }
     blueArm = Armnow;
     //红方
     redArm = redCharacter->m_Zhuangbei;

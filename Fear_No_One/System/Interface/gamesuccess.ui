@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Duiwu</class>
- <widget class="QWidget" name="Duiwu">
+ <class>GameSuccess</class>
+ <widget class="QWidget" name="GameSuccess">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -22,54 +22,53 @@
      <height>600</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
    <property name="text">
     <string/>
    </property>
+   <property name="scaledContents">
+    <bool>false</bool>
+   </property>
   </widget>
-  <widget class="QLabel" name="lb_duiwu">
+  <widget class="MyButtonGameStart" name="pb_returnGameStart">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>900</width>
-     <height>100</height>
+     <x>240</x>
+     <y>500</y>
+     <width>421</width>
+     <height>101</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>31</pointsize>
+     <family>华文新魏</family>
+     <pointsize>25</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
-   <property name="text">
-    <string>角色列表</string>
-   </property>
-  </widget>
-  <widget class="QTableWidget" name="tw_duiwu">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>100</y>
-     <width>900</width>
-     <height>500</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pb_close">
-   <property name="geometry">
-    <rect>
-     <x>822</x>
-     <y>0</y>
-     <width>61</width>
-     <height>41</height>
-    </rect>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
    </property>
    <property name="text">
-    <string>close</string>
+    <string>重新开始</string>
+   </property>
+   <property name="flat">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyButtonGameStart</class>
+   <extends>QPushButton</extends>
+   <header>mybuttongamestart.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

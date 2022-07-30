@@ -8,7 +8,7 @@ GameStart::GameStart(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    CGameSystem::m_gameSound->gameStartSoudPlay(true); //开始界面音乐播放
+    CGameSystem::m_gameSound->gameStartBgmPlay(true); //开始界面音乐播放
 }
 
 GameStart::~GameStart()

@@ -2,6 +2,7 @@
 #define SHANGYAO_H
 
 #include <QWidget>
+#include "Arms.h"
 
 namespace Ui {
 class ShangYao;
@@ -14,6 +15,8 @@ class ShangYao : public QWidget
 public:
     explicit ShangYao(QWidget *parent = 0);
     ~ShangYao();
+
+    CArm* ArmNow;
 
 private slots:
     void on_pb_yes_clicked();

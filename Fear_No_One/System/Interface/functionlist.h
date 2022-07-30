@@ -5,6 +5,7 @@
 #include <CGameSystem.h>
 #include "duiwu.h"
 #include "gamemap.h"
+#include "soundopenclose.h"
 
 namespace Ui {
 class Functionlist;
@@ -22,6 +23,8 @@ public:
     Duiwu * m_duiwu;
 signals:
     void ST_RedWork();
+    void SIG_oundOpenCloseChoice(); //音效开启和关闭
+    void SIG_jumpToGameStart(); //游戏界面跳转
 private slots:
     void on_pb_sound_clicked();
 

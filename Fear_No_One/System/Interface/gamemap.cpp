@@ -4,7 +4,6 @@
 #include "Arms.h"
 #include "Map.h"
 #include <QMessageBox>
-#include <iostream>
 #include <QDebug>
 
 bool GameMap::m_actionListEnable          =0;
@@ -17,6 +16,7 @@ bool GameMap::m_echangePeopleListEnable   =0;
 bool GameMap::m_echangeArmListEnable      =0;
 bool GameMap::m_shangyaoEnable            =0;
 bool GameMap::m_FunctionlistEnable        =0;
+bool GameMap::m_soundOpenCLoseEnable      =0;
 
 GameMap::GameMap(QWidget *parent) :
     QWidget(parent),
@@ -34,7 +34,8 @@ GameMap::GameMap(QWidget *parent) :
     m_Functionlist(NULL),
     timer(nullptr),
     TimeId(0),
-    m_shangyao(NULL)
+    m_shangyao(NULL),
+    m_soundOpenCLose(NULL)
 {
     ui->setupUi(this);
     setFocusPolicy(Qt::StrongFocus);
@@ -112,6 +113,25 @@ GameMap::GameMap(QWidget *parent) :
                      SIGNAL(ST_RedWork()),
                      this,
                      SLOT(RedWork()));
+    QObject::connect(m_Functionlist,
+                     SIGNAL(SIG_oundOpenCloseChoice()),
+                     this,
+                     SLOT(slot_setSoundOpenCloseChoice()));
+    QObject::connect(m_Functionlist,
+                     SIGNAL(SIG_jumpToGameStart()),
+                     this,
+                     SLOT(slot_jumpToGameStart()));
+
+    m_soundOpenCLose = new SoundOpenClose(this);
+    QObject::connect(m_soundOpenCLose,
+                     SIGNAL(SIG_soundOpen()),
+                     this,
+                     SLOT(slot_soundOpen()));
+    QObject::connect(m_soundOpenCLose,
+                     SIGNAL(SIG_soundClose()),
+                     this,
+                     SLOT(slot_soundClose()));
+
 
 
     timer = new QTimer(this);
@@ -171,6 +191,11 @@ GameMap::GameMap(QWidget *parent) :
     m_Functionlist->hide();
     m_FunctionlistEnable = false;
     m_Functionlist->setGeometry(750,0, m_Functionlist->width(), m_Functionlist->height());
+
+    m_soundOpenCLose->hide();
+    m_soundOpenCLoseEnable = false;
+    m_soundOpenCLose->setGeometry(750,50,m_soundOpenCLose->width(), m_soundOpenCLose->height());
+
     //鼠标捕获
     setMouseTracking(true);
     //开启时间片
@@ -246,11 +271,49 @@ GameMap::~GameMap()
         delete m_Functionlist;
         m_Functionlist = NULL;
     }
+    if(m_soundOpenCLose)
+    {
+        delete m_soundOpenCLose;
+        m_soundOpenCLose = NULL;
+    }
 }
 
 //时间片运行
 void GameMap::slot_timeadd(){
     TimeId++;
+    if(CGameSystem::gameOverFlag)//游戏进程检测
+    {
+        //关闭地图背景音乐
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        //播放游戏结束音效
+        CGameSystem::m_gameSound->gameOverSoundPlay(true);
+        //跳转到结束画面
+        Q_EMIT SIG_jumpWidget(5);
+    }
+    if(CGameSystem::gameSuccessFlag)
+    //if(CGameSystem::Mouse_X >=0 && CGameSystem::Mouse_X <=100)
+    {
+        //关闭地图背景音乐
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        //播放游戏结束音效
+        CGameSystem::m_gameSound->gameSuccessSoundPlay(true);
+        //跳转到结束画面
+        Q_EMIT SIG_jumpWidget(6);
+    }
     updateMap();
     QCoreApplication::processEvents();//保证完整的show
 }
@@ -474,6 +537,11 @@ void GameMap::drawPixmap(QPainter *painter){
     }else{
         m_Functionlist->hide();
     }
+    if(GameMap::m_soundOpenCLoseEnable){
+        m_soundOpenCLose->show();
+    }else{
+        m_soundOpenCLose->hide();
+    }
 
 
 
@@ -496,6 +564,8 @@ void GameMap::mouseMoveEvent(QMouseEvent *event)
     qDebug()<<"鼠标Y的位置" << CGameSystem::Mouse_Y;
     //test1 获取成功
 
+
+
     updateMap();
 }
 
@@ -506,6 +576,7 @@ void GameMap::mousePressEvent(QMouseEvent *event){
     if(!m_actionListEnable && !m_armListEnable && !m_armInfoEnable
             && !m_tufeiListEnable && !m_attackReadyInfoEnable && !m_gethithpEnable
             && !m_echangePeopleListEnable && !m_echangeArmListEnable&& !m_FunctionlistEnable
+            && !m_soundOpenCLoseEnable
             && !key_controlAble){
         int Mouse_pos_relativelyX = CGameSystem::Mouse_X/60+1;
         int Mouse_pos_relativelyY = (CGameSystem::Sys_Window_Height - CGameSystem::Mouse_Y)/60+1;
@@ -553,6 +624,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
     if(!m_actionListEnable && !m_armListEnable && !m_armInfoEnable
             && !m_tufeiListEnable && !m_attackReadyInfoEnable
             && !m_echangePeopleListEnable && !m_echangeArmListEnable&& !m_FunctionlistEnable
+            && !m_soundOpenCLoseEnable
             && key_controlAble)
     {
         switch(op){
@@ -609,7 +681,6 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                     key_controlAble = 0;//结束控制
 
                     actionListShow();//显示动作列表
-
                     break;
                    }
                 case Qt::Key_Escape://esc
@@ -657,7 +728,7 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                 OverAction();//每种操作后都禁止选中
             }
 
-            if(m_armListEnable && m_armInfoEnable) //动作攻击->武器列表，武器信息 的回退
+            if(m_armListEnable || m_armInfoEnable) //动作攻击->武器列表，武器信息 的回退
             {
                 m_armListEnable = false;
                 m_armInfoEnable = false;
@@ -677,11 +748,11 @@ void GameMap::keyPressEvent(QKeyEvent *event){
                 m_tufeiListEnable = true;
             }
 
-            if(m_shangyaoEnable)//动作物品->伤药 的回退
+            if(m_shangyaoEnable)   //武器列表->伤药 的回退
             {
                 m_shangyaoEnable = false;
-                m_actionListEnable = true;
             }
+
 
             if(m_echangePeopleListEnable) //动作交换->交换人物列表  的回退
             {
@@ -693,6 +764,12 @@ void GameMap::keyPressEvent(QKeyEvent *event){
             {
                 m_echangeArmListEnable = false;
                 m_echangePeopleListEnable = true;
+            }
+
+            if(m_soundOpenCLoseEnable)   //functionlist->音效开关 回退
+            {
+                m_soundOpenCLoseEnable = false;
+                m_FunctionlistEnable = true;
             }
 
             updateMap();
@@ -707,12 +784,6 @@ void GameMap::keyPressEvent(QKeyEvent *event){
 void GameMap::actionListShow()
 {
     m_actionListEnable = false;
-    m_armListEnable = false;
-    m_armInfoEnable = false;
-    m_attackReadyInfoEnable = false;
-    m_tufeiListEnable = false;
-    m_echangeArmListEnable = false;
-    m_echangePeopleListEnable = false;
 
     m_actionList->deleteItemList();
 
@@ -826,18 +897,18 @@ void GameMap::slot_action(QString actionName)
     }
     else if(!strcmp(actionName.toStdString().c_str(), "交互"))
     {
-//        //获取当前人物信息
-//        //1.获取人物信息
-//        int peoid = CGameSystem::using_peoid;
-//        Character *character = CGameSystem::Character_Info[peoid-1];
-//        //获取当前人物x，y坐标
-//        int x = character->m_NowX;
-//        int y = character->m_NowY;
-//        //获取关卡id
-//        int guangkaid = CGameSystem::Checkpoint-1;
+        //获取当前人物信息
+        //1.获取人物信息
+        int peoid = CGameSystem::using_peoid;
+        Character *character = CGameSystem::Character_Info[peoid-1];
+        //获取当前人物x，y坐标
+        int x = character->m_NowX;
+        int y = character->m_NowY;
+        //获取关卡id
+        int guangkaid = CGameSystem::Checkpoint;
 
-//        int id = CGameSystem::Able_UsedtoGroundFun(guangkaid,x,y);
-//        CGameSystem::side_story_used(id);
+        int id = CGameSystem::Able_UsedtoGroundFun(guangkaid,x,y);
+        CGameSystem::Side_story(id);
         OverAction();//每种操作后都禁止选中
     }
     else if(!strcmp(actionName.toStdString().c_str(), "交换"))
@@ -893,6 +964,7 @@ void GameMap::slot_armChoice(CArm *Armnow)
     //伤药
     if(Armnow->m_Id == _DEF_CArm_BASE + 5){
          m_shangyaoEnable = true;
+         m_shangyao->ArmNow = Armnow; //保存选中伤药
     }
     else
     {
@@ -931,11 +1003,13 @@ void GameMap::slot_useShangYao(bool yes)
 {
     Tool_Info* toolInfo = new Tool_Info;
     if(yes)
-    {
-        //hp增加
-        toolInfo->showinfo("使用成功，Hp恢复1点");
-    }
+    {     
+        m_shangyao->ArmNow->Used_Thing(CGameSystem::using_peoid);
+        toolInfo->showinfo("使用成功，Hp恢复25点");
+        m_armListEnable = false;
 
+    }
+    m_armInfoEnable = false;
     m_shangyaoEnable = false;
 }
 
@@ -966,8 +1040,7 @@ void GameMap::OverAction(){
     qDebug()<<CGameSystem::Character_Info[CGameSystem::using_peoid-1]->m_Id -_DEF_Character_BASE;
 }
 
-
-//-----------------------------自动移动
+//-----------------------------自动移动------------------------------------------------
 int GameMap::RedWork_AIATKPeo(int peoid,int round){//能攻击到的最好目标；
     std::list<int>ans;
         int x =  CGameSystem::Character_Info[peoid-1]->m_NowX;
@@ -1005,6 +1078,8 @@ int GameMap::RedWork_AIATKPeo(int peoid,int round){//能攻击到的最好目标
     }
     return res;
 };
+
+
 void GameMap::RedWork_AIMovetoPeo(int id){//智能移动
     std::map<int,int>disfind;//人物 - juli;
     //计算当前单位到所有单位的距离 并且排序;
@@ -1305,6 +1380,16 @@ void GameMap::BlueWork(){
     CGameSystem::WoFangXingDong = 1;
     //闪出标志;
      m_tool_info->showinfo("我方回合");
+
+     if(CGameSystem::Character_Info[0]->m_Islive == 0)//主角死亡;
+     {
+         Tool_Info* tinfo = new Tool_Info;
+         tinfo->showinfo(QString("主角已死亡，游戏结束"));
+         delete tinfo;
+         tinfo = NULL;
+         CGameSystem::gameOverFlag = true;
+         return;
+     }
     //切换背景音乐;
     //1.设置所有人可以移动
     for(auto it = CGameSystem::Character_Info.begin();it!=CGameSystem::Character_Info.end();it++){
@@ -1314,4 +1399,49 @@ void GameMap::BlueWork(){
     }
     //只通过信号改变;
 };
+
+
+
+//音效开启和关闭选择界面
+void GameMap::slot_setSoundOpenCloseChoice()
+{
+    m_soundOpenCLoseEnable = true;
+}
+
+//音效开启
+void GameMap::slot_soundOpen()
+{
+    if(!CGameSystem::m_gameSound->getSoundOpen())
+    {
+        CGameSystem::m_gameSound->setSoundOpen(true);
+        CGameSystem::m_gameSound->gameMapBgmPlay(true);
+        CGameSystem::m_gameSound->gameMouseMoveToChoiceSoundPlay(true);
+        CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(true);
+        CGameSystem::m_gameSound->gamePeopleMovePlay(true);
+    }
+    m_soundOpenCLoseEnable = false;
+}
+
+//音效关闭
+void GameMap::slot_soundClose()
+{
+    if(CGameSystem::m_gameSound->getSoundOpen())
+    {
+        CGameSystem::m_gameSound->setSoundOpen(false);
+        CGameSystem::m_gameSound->gameMapBgmPlay(false);
+        CGameSystem::m_gameSound->gameMouseMoveToChoiceSoundPlay(false);
+        CGameSystem::m_gameSound->gameMousePressChoiceSoundPlay(false);
+        CGameSystem::m_gameSound->gamePeopleMovePlay(false);
+        CGameSystem::m_gameSound->gameStartBgmPlay(false);
+    }
+    GameMap::m_soundOpenCLoseEnable = false;
+}
+
+//跳转回游戏开始界面
+void GameMap::slot_jumpToGameStart()
+{
+    CGameSystem::m_gameSound->gameMapBgmPlay(false);
+    CGameSystem::m_gameSound->gameStartBgmPlay(true);
+    Q_EMIT SIG_jumpWidget(1);
+}
 
